@@ -1,0 +1,22 @@
+[
+  {
+    "language": "zh",
+    "path": "/root/lhy/paddleocr/benchmarks/simple_dataset/zh.jpg"
+  },
+  {
+    "language": "en",
+    "path": "/root/lhy/paddleocr/benchmarks/simple_dataset/en.jpg"
+  },
+  {
+    "language": "ja",
+    "path": "/root/lhy/paddleocr/benchmarks/simple_dataset/ja.jpg"
+  },
+  {
+    "language": "ko",
+    "path": "/root/lhy/paddleocr/benchmarks/simple_dataset/ko.jpg"
+  },
+  {
+    "language": "th",
+    "path": "/root/lhy/paddleocr/benchmarks/simple_dataset/th.jpg"
+  }
+]

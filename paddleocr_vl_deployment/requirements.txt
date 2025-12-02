@@ -1,0 +1,11 @@
+# PaddleOCR-VL 部署依赖
+paddlepaddle-gpu==3.2.0
+paddleocr[doc-parser]
+safetensors==0.6.2.dev0
+uvicorn
+fastapi
+python-multipart
+requests
+Pillow
+numpy
+opencv-python

@@ -1,0 +1,269 @@
+{
+  "zh": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_zh_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_zh_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_zh_3texts.jpg": [
+        "Chinese Text Recognition",
+        "OCR Accuracy Test",
+        "Chinese Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_zh_5texts.jpg": [
+        "Chinese Text Recognition",
+        "OCR Accuracy Test",
+        "Chinese Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "Chinese OCR Test"
+  },
+  "en": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_en_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_en_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_en_3texts.jpg": [
+        "Hello World",
+        "OCR Test",
+        "English Text Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_en_5texts.jpg": [
+        "Hello World",
+        "OCR Test",
+        "English Text Recognition",
+        "Multi-language Support",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "English OCR Test"
+  },
+  "ja": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ja_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ja_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ja_3texts.jpg": [
+        "Japanese Text Recognition",
+        "OCR Accuracy Test",
+        "Japanese Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ja_5texts.jpg": [
+        "Japanese Text Recognition",
+        "OCR Accuracy Test",
+        "Japanese Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "Japanese OCR Test"
+  },
+  "ko": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ko_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ko_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ko_3texts.jpg": [
+        "Korean Text Recognition",
+        "OCR Accuracy Test",
+        "Korean Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ko_5texts.jpg": [
+        "Korean Text Recognition",
+        "OCR Accuracy Test",
+        "Korean Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "Korean OCR Test"
+  },
+  "th": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_th_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_th_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_th_3texts.jpg": [
+        "Thai Text Recognition",
+        "OCR Accuracy Test",
+        "Thai Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_th_5texts.jpg": [
+        "Thai Text Recognition",
+        "OCR Accuracy Test",
+        "Thai Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "Thai OCR Test"
+  },
+  "ru": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ru_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ru_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ru_3texts.jpg": [
+        "Russian Text Recognition",
+        "OCR Accuracy Test",
+        "Russian Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_ru_5texts.jpg": [
+        "Russian Text Recognition",
+        "OCR Accuracy Test",
+        "Russian Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "Russian OCR Test"
+  },
+  "fr": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_fr_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_fr_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_fr_3texts.jpg": [
+        "French Text Recognition",
+        "OCR Accuracy Test",
+        "French Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_fr_5texts.jpg": [
+        "French Text Recognition",
+        "OCR Accuracy Test",
+        "French Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "French OCR Test"
+  },
+  "de": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_de_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_de_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_de_3texts.jpg": [
+        "German Text Recognition",
+        "OCR Accuracy Test",
+        "German Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_de_5texts.jpg": [
+        "German Text Recognition",
+        "OCR Accuracy Test",
+        "German Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "German OCR Test"
+  },
+  "es": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_es_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_es_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_es_3texts.jpg": [
+        "Spanish Text Recognition",
+        "OCR Accuracy Test",
+        "Spanish Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_es_5texts.jpg": [
+        "Spanish Text Recognition",
+        "OCR Accuracy Test",
+        "Spanish Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "Spanish OCR Test"
+  },
+  "it": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_it_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_it_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_it_3texts.jpg": [
+        "Italian Text Recognition",
+        "OCR Accuracy Test",
+        "Italian Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_it_5texts.jpg": [
+        "Italian Text Recognition",
+        "OCR Accuracy Test",
+        "Italian Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "Italian OCR Test"
+  },
+  "pt": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_pt_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_pt_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_pt_3texts.jpg": [
+        "Portuguese Text Recognition",
+        "OCR Accuracy Test",
+        "Portuguese Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_pt_5texts.jpg": [
+        "Portuguese Text Recognition",
+        "OCR Accuracy Test",
+        "Portuguese Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "Portuguese OCR Test"
+  },
+  "el": {
+    "images": [
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_el_3texts.jpg",
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_el_5texts.jpg"
+    ],
+    "expected_texts": {
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_el_3texts.jpg": [
+        "Greek Text Recognition",
+        "OCR Accuracy Test",
+        "Greek Character Recognition"
+      ],
+      "/root/lhy/paddleocr/accuracy_test/test_images/test_el_5texts.jpg": [
+        "Greek Text Recognition",
+        "OCR Accuracy Test",
+        "Greek Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "score_threshold": 0.5,
+    "description": "Greek OCR Test"
+  }
+}
+
+
+
