@@ -1,7 +1,7 @@
 # PolyOCR Service verification
 
 Date: 2026-09-01  
-Verified revision: `36c6c6730c3cbe93815e3585cb07305ce2cce113` plus this record  
+Verified implementation revision: `a5cec61` plus this record  
 Host: macOS arm64  
 Host Python: 3.10.20  
 Docker server: 29.7.2  
@@ -11,7 +11,7 @@ Container: Linux arm64, Python 3.10.16
 
 | Command | Result |
 | --- | --- |
-| `python3 -m ruff format --check .` | Passed, 32 files already formatted |
+| `python3 -m ruff format --check .` | Passed, 30 files already formatted |
 | `python3 -m ruff check .` | Passed |
 | `python3 -m pytest -m "not integration" -q` | Passed, 27 tests; 1 integration test deselected |
 | `python3 -m build` | Passed; sdist and wheel built |
