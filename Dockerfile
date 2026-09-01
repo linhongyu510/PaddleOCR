@@ -13,7 +13,6 @@ RUN apt-get update \
 
 COPY pyproject.toml README.md ./
 COPY src ./src
-COPY web ./web
 COPY benchmarks/simple_dataset/en.jpg ./tests/fixtures/en.jpg
 
 RUN python -m pip install --upgrade pip \

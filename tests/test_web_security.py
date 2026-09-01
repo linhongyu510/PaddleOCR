@@ -5,8 +5,8 @@ ROOT = Path(__file__).parents[1]
 
 def test_web_uses_text_content_for_remote_results() -> None:
     paths = (
-        ROOT / "web/index.html",
-        ROOT / "web/translation.html",
+        ROOT / "src/polyocr/web/index.html",
+        ROOT / "src/polyocr/web/translation.html",
         ROOT / "deployment/paddleocr-vl/static/index.html",
     )
     for path in paths:

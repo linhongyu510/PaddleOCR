@@ -77,7 +77,7 @@ def create_app(
 
     @app.get("/")
     async def root() -> Any:
-        web_file = Path(__file__).parents[2] / "web" / "index.html"
+        web_file = Path(__file__).parent / "web" / "index.html"
         if web_file.exists():
             return FileResponse(web_file)
         return {"service": "PolyOCR Service", "docs": "/docs"}
