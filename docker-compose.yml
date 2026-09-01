@@ -1,0 +1,20 @@
+services:
+  polyocr:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - POLYOCR_AUTH_ENABLED=true
+      - POLYOCR_API_KEY=${POLYOCR_API_KEY:?set POLYOCR_API_KEY}
+      - POLYOCR_MAX_UPLOAD_MB=${POLYOCR_MAX_UPLOAD_MB:-10}
+      - POLYOCR_MAX_IMAGE_PIXELS=${POLYOCR_MAX_IMAGE_PIXELS:-25000000}
+      - POLYOCR_MAX_CONCURRENCY=${POLYOCR_MAX_CONCURRENCY:-2}
+      - POLYOCR_OCR_WORKERS=${POLYOCR_OCR_WORKERS:-2}
+      - TRANSLATION_API_KEY=${TRANSLATION_API_KEY:-}
+      - TRANSLATION_BASE_URL=${TRANSLATION_BASE_URL:-https://api.openai.com/v1}
+      - TRANSLATION_MODEL=${TRANSLATION_MODEL:-gpt-4o-mini}
+    volumes:
+      - paddle-cache:/home/polyocr/.paddlex
+
+volumes:
+  paddle-cache:

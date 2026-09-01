@@ -1,0 +1,14 @@
+.git
+.github
+.env
+.venv
+__pycache__
+*.pyc
+*.log
+.pytest_cache
+.ruff_cache
+.coverage
+accuracy_test
+api_test
+docs
+paddleocr_vl_deployment
