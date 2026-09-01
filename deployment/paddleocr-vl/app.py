@@ -104,9 +104,7 @@ def create_app(
                 "errorCode": 0,
                 "errorMsg": "Success",
                 "result": {
-                    "layoutParsingResults": [
-                        dict(_result_mapping(result)) for result in output
-                    ],
+                    "layoutParsingResults": [dict(_result_mapping(result)) for result in output],
                     "dataInfo": {
                         "inputType": "pdf" if payload.fileType == 0 else "image",
                         "totalPages": len(output),

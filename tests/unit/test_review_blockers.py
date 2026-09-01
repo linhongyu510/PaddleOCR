@@ -127,9 +127,7 @@ def test_ocr_concurrency_is_bounded() -> None:
     service = OCRService(lambda _language: backend, max_concurrency=2, workers=4)
 
     async def run() -> None:
-        await asyncio.gather(
-            *(service.recognize(png_bytes(), "en", 0.5) for _ in range(5))
-        )
+        await asyncio.gather(*(service.recognize(png_bytes(), "en", 0.5) for _ in range(5)))
         service.close()
 
     asyncio.run(run())

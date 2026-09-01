@@ -115,9 +115,7 @@ class OpenAITranslationProvider:
             ) as client:
                 response = await client.post(
                     f"{str(self._settings.translation_base_url).rstrip('/')}/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {self._settings.translation_api_key}"
-                    },
+                    headers={"Authorization": f"Bearer {self._settings.translation_api_key}"},
                     json=payload,
                 )
             response.raise_for_status()

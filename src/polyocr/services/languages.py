@@ -28,9 +28,7 @@ _LANGUAGES = (
     Language("latin", "latin", "Latin", ("latin", "la", "拉丁语")),
 )
 
-_BY_ALIAS = {
-    alias.casefold(): language for language in _LANGUAGES for alias in language.aliases
-}
+_BY_ALIAS = {alias.casefold(): language for language in _LANGUAGES for alias in language.aliases}
 
 
 def resolve_language(value: str) -> Language:

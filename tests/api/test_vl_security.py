@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 
 from polyocr.core.config import Settings
 
-
 ROOT = Path(__file__).parents[2]
 
 
