@@ -28,7 +28,7 @@ def call_ocr(server: str, img_path: Path, language: str, preprocess: bool, score
     data = {
         'language': language,
         'preprocess': 'true' if preprocess else 'false',
-        'score': str(score)
+        'score_threshold': str(score)
     }
     headers = { 'Authorization': f'Bearer {api_key}' }
     resp = requests.post(f"{server}/v1/ocr", files=files, data=data, headers=headers, timeout=60)
@@ -37,10 +37,10 @@ def call_ocr(server: str, img_path: Path, language: str, preprocess: bool, score
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--server', default='http://43.137.12.144:16110')
+    ap.add_argument('--server', default='http://localhost:8000')
     ap.add_argument('--score', type=float, default=0.5)
     ap.add_argument('--preprocess', type=str, default='true')
-    ap.add_argument('--api_key', default='PolyNex-PolyOCR-2025xm')
+    ap.add_argument('--api_key', default=os.getenv('POLYOCR_API_KEY', ''))
     ap.add_argument('--datasets', default=str((ROOT / 'benchmarks' / 'datasets' / 'manifest.json')))
     ap.add_argument('--out', default=str((ROOT / 'benchmarks' / 'results')))
     args = ap.parse_args()
@@ -79,5 +79,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 

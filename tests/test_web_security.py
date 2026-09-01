@@ -16,11 +16,26 @@ def test_web_uses_text_content_for_remote_results() -> None:
 
 
 def test_legacy_entrypoints_do_not_contain_credentials_or_runtime_config_api() -> None:
-    combined = "\n".join(
-        (ROOT / name).read_text(encoding="utf-8")
-        for name in ("main.py", "auth.py", "translation.py")
+    forbidden = (
+        "PolyNex-" + "PolyOCR-" + "2025xm",
+        "782b52f0-" + "d5b6-" + "488b-" + "9fdd-" + "0a9026d3a0c0",
+        "183." + "250.90.218",
+        "43." + "137.12.144",
+        "10." + "206.0.6",
     )
-    assert "PolyNex-PolyOCR-2025xm" not in combined
-    assert "782b52f0-d5b6-488b-9fdd-0a9026d3a0c0" not in combined
+    paths = [
+        path
+        for path in ROOT.rglob("*")
+        if path.is_file()
+        and ".git" not in path.parts
+        and "tests" not in path.parts
+        and path.suffix in {".html", ".json", ".md", ".py", ".sh", ".yaml", ".yml"}
+    ]
+    combined = "\n".join(path.read_text(encoding="utf-8", errors="ignore") for path in paths)
+    for value in forbidden:
+        assert value not in combined
     assert "/v1/translation/config" not in combined
     assert "update_translation_config" not in combined
+    assert not (ROOT / "index.html").exists()
+    assert not (ROOT / "translation.html").exists()
+    assert not (ROOT / "frontend_server.py").exists()
