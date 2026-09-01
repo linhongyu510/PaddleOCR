@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PolyOCR-VL</title>
+</head>
+<body>
+  <h1>PolyOCR-VL 文档解析</h1>
+  <p>仅接受本地文件上传，不接受 URL。</p>
+  <form id="vl-form">
+    <input id="api-key" type="password" autocomplete="off" placeholder="VL API Key" required>
+    <input id="file" type="file" accept="image/*,.pdf" required>
+    <button type="submit">解析</button>
+  </form>
+  <pre id="result" aria-live="polite"></pre>
+  <script>
+    const result = document.querySelector("#result");
+    document.querySelector("#vl-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const file = document.querySelector("#file").files[0];
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const encoded = String(reader.result).split(",", 2)[1];
+        const response = await fetch("/layout-parsing", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-Key": document.querySelector("#api-key").value
+          },
+          body: JSON.stringify({file: encoded, fileType: file.type === "application/pdf" ? 0 : 1})
+        });
+        result.textContent = JSON.stringify(await response.json(), null, 2);
+      };
+      reader.onerror = () => { result.textContent = "文件读取失败。"; };
+      reader.readAsDataURL(file);
+    });
+  </script>
+</body>
+</html>

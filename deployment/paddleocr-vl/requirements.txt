@@ -1,0 +1,5 @@
+fastapi>=0.115,<1
+paddleocr[doc-parser]>=3.0,<4
+pydantic-settings>=2.2,<3
+python-multipart>=0.0.9,<1
+uvicorn[standard]>=0.30,<1
