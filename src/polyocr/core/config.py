@@ -26,7 +26,6 @@ class Settings(BaseSettings):
     max_concurrency: PositiveInt = 2
     ocr_workers: PositiveInt = 2
     default_language: str = "ch"
-    log_level: str = "INFO"
     max_translation_items: PositiveInt = 50
     max_translation_chars: PositiveInt = 20_000
     translation_api_key: str | None = Field(

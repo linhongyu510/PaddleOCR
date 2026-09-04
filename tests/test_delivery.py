@@ -18,3 +18,28 @@ def test_bilingual_readmes_document_limits_and_verification() -> None:
         assert "POLYOCR_MAX_CONCURRENCY" in text
         assert "POLYOCR_MAX_TRANSLATION_ITEMS" in text
         assert "verification" in text.casefold() or "验证" in text
+
+
+def test_readmes_state_the_apache_license_and_no_longer_claim_it_is_missing() -> None:
+    for name in ("README.md", "README_EN.md"):
+        text = (ROOT / name).read_text(encoding="utf-8")
+        assert "Apache License 2.0" in text
+        assert "LICENSE" in text
+        assert "NOTICE" in text
+        assert "no license file" not in text.casefold()
+        assert "未包含许可证文件" not in text
+
+
+def test_readmes_document_the_language_contract() -> None:
+    """The language fix is user-visible, so it must be documented."""
+    for name in ("README.md", "README_EN.md"):
+        text = (ROOT / name).read_text(encoding="utf-8")
+        assert "/v1/languages" in text
+        assert "unsupported_language" in text
+        assert "78" in text
+
+
+def test_readmes_document_the_console_entry_point() -> None:
+    for name in ("README.md", "README_EN.md"):
+        text = (ROOT / name).read_text(encoding="utf-8")
+        assert "polyocr-service --host" in text

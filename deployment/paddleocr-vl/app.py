@@ -11,6 +11,7 @@ from typing import Any
 from fastapi import Depends, FastAPI, Request
 from pydantic import BaseModel, Field
 
+from polyocr import __version__
 from polyocr.api.errors import ServiceError, install_error_handlers
 from polyocr.core.config import Settings
 from polyocr.core.security import require_explicit_api_key
@@ -65,7 +66,7 @@ def create_app(
             active_pipeline = pipeline_factory()
         yield
 
-    app = FastAPI(title="PolyOCR-VL Service", version="0.2.0", lifespan=lifespan)
+    app = FastAPI(title="PolyOCR-VL Service", version=__version__, lifespan=lifespan)
     install_error_handlers(app)
 
     @app.middleware("http")

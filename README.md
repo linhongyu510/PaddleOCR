@@ -8,6 +8,10 @@
 ## 能力与边界
 
 - 基础 OCR 使用 PaddleOCR 3.x `predict()`，兼容 3.x 映射/对象结果和旧列表结果。
+- 支持 78 种语言，覆盖汉字、日文、韩文、拉丁、西里尔、阿拉伯、天城文、泰文、希腊文等
+  文字系统，并接受语种码、英文名和中文名三类别名（如 `fr` / `french` / `法文`）。
+- 语言在请求边界完成校验：未知语言返回 `422 unsupported_language`，不会延迟到加载模型
+  时才失败。
 - 图片在推理前接受字节数、解码结果、像素数和置信度阈值校验。
 - 同步模型推理在线程池执行，并由信号量限制并发。
 - 翻译输入限制条目数和总字符数；供应商返回数量必须与输入一致。
@@ -35,6 +39,12 @@ cp .env.example .env
 uvicorn polyocr.main:create_app --factory --host 0.0.0.0 --port 8000
 ```
 
+安装后也可以直接使用命令行入口（默认监听 `127.0.0.1:8000`）：
+
+```bash
+polyocr-service --host 0.0.0.0 --port 8000
+```
+
 访问 `http://localhost:8000/` 使用 Web 页面，API 文档位于 `/docs`。
 
 ## API
@@ -45,6 +55,12 @@ uvicorn polyocr.main:create_app --factory --host 0.0.0.0 --port 8000
 curl http://localhost:8000/v1/health
 ```
 
+查询支持的语言（返回语种码、PaddleOCR 语言码、文字系统和可用别名）：
+
+```bash
+curl http://localhost:8000/v1/languages
+```
+
 OCR 请求支持 `X-API-Key` 或 Bearer Token：
 
 ```bash
@@ -53,6 +69,28 @@ curl -X POST http://localhost:8000/v1/ocr \
   -F "file=@benchmarks/simple_dataset/en.jpg" \
   -F "language=en" \
   -F "score_threshold=0.5"
+```
+
+`language` 接受语种码、英文名或中文名，响应中的 `language` 始终回显规范语种码：
+
+```bash
+curl -X POST http://localhost:8000/v1/ocr \
+  -H "X-API-Key: $POLYOCR_API_KEY" \
+  -F "file=@image.jpg" \
+  -F "language=法文"      # 等价于 fr / french
+```
+
+成功响应：
+
+```json
+{
+  "code": 0,
+  "message": "Recognition succeeded.",
+  "request_id": "...",
+  "cost_ms": 412.7,
+  "language": "fr",
+  "items": [{"text": "Bonjour", "score": 0.99, "bbox": [12, 8, 96, 34]}]
+}
 ```
 
 翻译：
@@ -136,4 +174,8 @@ Python 3.10–3.12 上执行。
 
 ## 许可证
 
-仓库当前未包含许可证文件；许可证需由仓库所有者在发布前确认。
+采用 [Apache License 2.0](LICENSE)，与上游 PaddleOCR 保持一致；第三方署名记录在
+[`NOTICE`](NOTICE)。
+
+本仓库是基于 PaddleOCR 构建的独立社区服务，并非 PaddleOCR 官方组件。PaddleOCR 模型在运行
+时从其原始分发方下载，并受各自许可证与使用条款约束。

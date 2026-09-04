@@ -11,7 +11,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home --uid 10001 polyocr
 
-COPY pyproject.toml README.md ./
+# LICENSE and NOTICE are declared in pyproject `license-files`. Without them in
+# the build context the install silently produces an image whose installed
+# distribution carries no license or attribution files.
+COPY pyproject.toml README.md LICENSE NOTICE ./
 COPY src ./src
 COPY benchmarks/simple_dataset/en.jpg ./tests/fixtures/en.jpg
 

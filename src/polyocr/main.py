@@ -10,12 +10,13 @@ from fastapi import Depends, FastAPI, File, Form, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
+from polyocr import __version__
 from polyocr.api.errors import ServiceError, install_error_handlers
 from polyocr.core.config import Settings
 from polyocr.core.security import require_api_key
 from polyocr.schemas.ocr import OCRResponse
 from polyocr.schemas.translation import TranslationRequest, TranslationResponse
-from polyocr.services.languages import supported_languages
+from polyocr.services.languages import resolve_language, supported_languages
 from polyocr.services.model_manager import ModelManager
 from polyocr.services.ocr import OCRService, create_paddle_backend
 from polyocr.services.translation import OpenAITranslationProvider, TranslationService
@@ -27,6 +28,9 @@ def create_app(
     translation_service: TranslationService | None = None,
 ) -> FastAPI:
     active_settings = settings or Settings()
+    # Fail fast on a misconfigured default language instead of returning 422 on
+    # every request that omits `language`.
+    resolve_language(active_settings.default_language)
     manager: ModelManager | None = None
     if ocr_service is None:
         manager = ModelManager(create_paddle_backend)
@@ -50,7 +54,7 @@ def create_app(
 
     app = FastAPI(
         title="PolyOCR Service",
-        version="0.2.0",
+        version=__version__,
         lifespan=lifespan,
     )
     app.state.settings = active_settings
@@ -92,15 +96,20 @@ def create_app(
 
     @app.get("/v1/languages")
     async def languages() -> dict[str, Any]:
+        catalogue = supported_languages()
         return {
+            "count": len(catalogue),
+            "default": active_settings.default_language,
             "languages": [
                 {
                     "code": language.code,
                     "paddle_code": language.paddle_code,
                     "name": language.name,
+                    "script": language.script,
+                    "aliases": list(language.all_aliases),
                 }
-                for language in supported_languages()
-            ]
+                for language in catalogue
+            ],
         }
 
     @app.post("/v1/ocr", response_model=OCRResponse)
@@ -120,12 +129,15 @@ def create_app(
                 "Uploaded file is not a supported image.",
                 415,
             )
+        selected_language = language or active_settings.default_language
+        # Reject an unknown language at the request boundary (422) instead of
+        # letting it surface later as a model-load failure (503).
+        resolved = resolve_language(selected_language)
         data = await file.read(active_settings.max_upload_bytes + 1)
         started = time.perf_counter()
-        selected_language = language or active_settings.default_language
         items = await ocr_service.recognize(
             data,
-            selected_language,
+            resolved.code,
             score_threshold,
             max_bytes=active_settings.max_upload_bytes,
             max_pixels=active_settings.max_image_pixels,
@@ -133,7 +145,7 @@ def create_app(
         return OCRResponse(
             request_id=request.state.request_id,
             cost_ms=round((time.perf_counter() - started) * 1000, 3),
-            language=selected_language,
+            language=resolved.code,
             items=items,
         )
 

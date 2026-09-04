@@ -1,7 +1,6 @@
 """Public service errors and FastAPI exception handlers."""
 
 from dataclasses import dataclass
-from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
@@ -63,10 +62,3 @@ def install_error_handlers(app: FastAPI) -> None:
             "internal_error",
             "The service could not process the request.",
         )
-
-
-def error_schema() -> dict[str, Any]:
-    return {
-        "model": None,
-        "description": "Unified error response.",
-    }

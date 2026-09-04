@@ -1,8 +1,10 @@
 import io
 
+import pytest
 from fastapi.testclient import TestClient
 from PIL import Image
 
+from polyocr.api.errors import ServiceError
 from polyocr.core.config import Settings
 from polyocr.main import create_app
 from polyocr.services.ocr import OCRService
@@ -115,3 +117,56 @@ def test_translation_result_mismatch_is_a_bad_gateway() -> None:
     )
     assert response.status_code == 502
     assert response.json()["error"]["code"] == "translation_result_mismatch"
+
+
+@pytest.mark.parametrize("language", ["klingon", "cyrillic", "eslav", "zz", "xx-YY"])
+def test_unsupported_language_is_rejected_at_the_boundary(language: str) -> None:
+    """An unknown language must be a 422, not a late 503 from model loading."""
+    response = make_client().post(
+        "/v1/ocr",
+        headers={"X-API-Key": "test-secret"},
+        files={"file": ("image.png", png_bytes(), "image/png")},
+        data={"language": language, "score_threshold": "0.5"},
+    )
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "unsupported_language"
+
+
+@pytest.mark.parametrize(
+    ("request_language", "reported_language"),
+    [("fr", "fr"), ("french", "fr"), ("法文", "fr"), ("ru", "ru"), ("ZH", "zh")],
+)
+def test_supported_languages_are_accepted_and_echoed_canonically(
+    request_language: str, reported_language: str
+) -> None:
+    response = make_client().post(
+        "/v1/ocr",
+        headers={"X-API-Key": "test-secret"},
+        files={"file": ("image.png", png_bytes(), "image/png")},
+        data={"language": request_language, "score_threshold": "0.5"},
+    )
+    assert response.status_code == 200
+    assert response.json()["language"] == reported_language
+
+
+def test_language_catalogue_is_published_with_scripts_and_aliases() -> None:
+    response = make_client().get("/v1/languages")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["count"] == len(body["languages"])
+    assert body["count"] >= 70
+    codes = {item["code"] for item in body["languages"]}
+    assert {"fr", "de", "es", "pt", "ru", "zh", "en", "ar", "hi"} <= codes
+    french = next(item for item in body["languages"] if item["code"] == "fr")
+    assert french["paddle_code"] == "fr"
+    assert french["script"] == "Latin"
+    assert "french" in french["aliases"]
+
+
+def test_misconfigured_default_language_fails_at_startup() -> None:
+    with pytest.raises(ServiceError) as exc:
+        create_app(
+            settings=Settings(auth_enabled=False, default_language="not-a-language"),
+            ocr_service=OCRService(lambda _language: FakeOCRBackend()),
+        )
+    assert exc.value.code == "unsupported_language"

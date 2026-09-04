@@ -1,0 +1,15 @@
+PolyOCR Service
+Copyright 2026 PolyOCR Service contributors
+
+This product includes software developed by the PaddlePaddle Authors.
+
+PaddleOCR
+Copyright (c) 2016 PaddlePaddle Authors. All Rights Reserved.
+Licensed under the Apache License, Version 2.0.
+https://github.com/PaddlePaddle/PaddleOCR
+
+This repository is an independent, community-maintained service built on top of
+PaddleOCR. It is not an official PaddleOCR component and is not endorsed by the
+PaddlePaddle Authors. PaddleOCR models and weights are downloaded at runtime
+from their original distributors and remain subject to their own licenses and
+terms of use.

@@ -9,6 +9,11 @@ PaddleOCR-VL deployment. This is a community project, not an official PaddleOCR 
 
 - Base OCR calls PaddleOCR 3.x `predict()` and normalizes both 3.x mapping/object results and
   legacy list results.
+- 78 languages across the Han, Japanese, Hangul, Latin, Cyrillic, Arabic, Devanagari, Thai and
+  Greek scripts. `language` accepts a language code, an English name, or a Chinese name
+  (`fr` / `french` / `法文` all resolve to French).
+- Languages are validated at the request boundary: an unknown language returns
+  `422 unsupported_language` instead of failing later during model loading.
 - Byte size, decoded pixel count, image validity, and score thresholds are checked before
   inference.
 - Blocking inference runs in a worker pool behind a concurrency semaphore.
@@ -40,6 +45,12 @@ Replace the sample API keys in `.env`, then start the service:
 uvicorn polyocr.main:create_app --factory --host 0.0.0.0 --port 8000
 ```
 
+An installed distribution also exposes a console script (defaults to `127.0.0.1:8000`):
+
+```bash
+polyocr-service --host 0.0.0.0 --port 8000
+```
+
 Open `http://localhost:8000/` for the web client or `/docs` for the API documentation.
 
 ## API
@@ -50,6 +61,12 @@ The health endpoint does not require authentication:
 curl http://localhost:8000/v1/health
 ```
 
+List supported languages, including PaddleOCR codes, scripts and accepted aliases:
+
+```bash
+curl http://localhost:8000/v1/languages
+```
+
 OCR accepts either `X-API-Key` or a Bearer token:
 
 ```bash
@@ -58,6 +75,20 @@ curl -X POST http://localhost:8000/v1/ocr \
   -F "file=@benchmarks/simple_dataset/en.jpg" \
   -F "language=en" \
   -F "score_threshold=0.5"
+```
+
+`language` accepts a code, an English name, or a Chinese name. The response always echoes the
+canonical code:
+
+```json
+{
+  "code": 0,
+  "message": "Recognition succeeded.",
+  "request_id": "...",
+  "cost_ms": 412.7,
+  "language": "fr",
+  "items": [{"text": "Bonjour", "score": 0.99, "bbox": [12, 8, 96, 34]}]
+}
 ```
 
 Translation:
@@ -142,5 +173,9 @@ offline tests across Python 3.10–3.12.
 
 ## License
 
-The repository currently has no license file. The repository owner must choose one before
-release.
+Licensed under the [Apache License 2.0](LICENSE), matching upstream PaddleOCR. Third-party
+attribution is recorded in [`NOTICE`](NOTICE).
+
+This repository is an independent, community-maintained service built on PaddleOCR. It is not
+an official PaddleOCR component. PaddleOCR models are downloaded at runtime from their original
+distributors and remain subject to their own licenses.
