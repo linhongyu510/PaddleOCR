@@ -1,3 +1,4 @@
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
@@ -110,3 +111,56 @@ def test_no_benchmark_script_sends_the_unsupported_preprocess_field() -> None:
         source = script.read_text(encoding="utf-8")
         assert "'preprocess'" not in source, f"{script.name} still sends preprocess"
         assert '"preprocess"' not in source, f"{script.name} still sends preprocess"
+
+
+def test_real_photograph_data_is_never_committed() -> None:
+    """CORD-v2 images are photographs of real people's receipts.
+
+    The dataset is CC-BY-4.0, but redistributing the images from this Apache-2.0
+    repository would be inappropriate regardless, so they are downloaded at runtime
+    into an ignored directory. This guards both the ignore rule and the tree.
+    """
+    ignore_rules = (ROOT / ".gitignore").read_text(encoding="utf-8")
+    assert "benchmarks/photo_dataset/" in ignore_rules
+
+    tracked = subprocess.run(
+        ["git", "ls-files", "benchmarks/photo_dataset"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert not tracked.stdout.strip(), f"photograph data is tracked: {tracked.stdout}"
+
+
+def test_photo_benchmark_downloads_rather_than_bundles_data() -> None:
+    source = (ROOT / "benchmarks" / "run_photo_benchmark.py").read_text(encoding="utf-8")
+    assert "cord-v2" in source, "the dataset source must be identified"
+    assert "CC-BY-4.0" in source, "the licence must be recorded"
+    assert "urllib.request" in source, "images must be fetched at runtime"
+
+
+def test_photo_benchmark_reports_uncertainty() -> None:
+    """A 15-image mean shift is easy to over-read without an interval."""
+    source = (ROOT / "benchmarks" / "run_photo_benchmark.py").read_text(encoding="utf-8")
+    assert "def bootstrap_interval" in source
+    assert "percentile" in source
+
+
+def test_docs_record_the_synthetic_to_real_gap() -> None:
+    doc = (ROOT / "docs" / "robustness.md").read_text(encoding="utf-8")
+    assert "Real photographs" in doc
+    assert "0.841" in doc, "the measured real-photo recall should be recorded"
+    # The decision must be justified by significance, not by the raw mean alone.
+    assert "includes zero" in doc or "include zero" in doc
+    assert "cord_07" in doc, "the outlier driving the apparent gain should be named"
+
+
+def test_readmes_record_the_real_photograph_benchmark() -> None:
+    for name in ("README.md", "README_EN.md"):
+        text = (ROOT / name).read_text(encoding="utf-8")
+        assert "run_photo_benchmark.py" in text
+        assert "0.841" in text
+        # CC-BY-4.0 requires attribution.
+        assert "CC-BY-4.0" in text
+        assert "CORD-v2" in text
