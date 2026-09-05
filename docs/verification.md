@@ -1,5 +1,98 @@
 # PolyOCR Service verification
 
+## Round 3 — per-language accuracy benchmark (2026-09-05)
+
+Host: macOS arm64, Python 3.12.14, paddleocr 3.7.0, paddlepaddle 3.3.1.
+
+### Why this round exists
+
+Round 2 proved each language *loads a model* and returns HTTP 200. That is not the
+same as recognising text correctly. A benchmark scoring real images against known
+text was added, and it immediately found a defect the earlier checks had missed.
+
+### Fixtures recovered
+
+`main` carried 70 labelled images across 34 languages under `accuracy_test/`, with
+expected text for 64 of them. The refactor branch deleted that directory along with
+its one-off run reports. The reports were genuinely disposable; the labelled images
+were not — they are the only ground truth in the repository, and they cover exactly
+the Latin and Cyrillic languages whose mapping was broken.
+
+They now live in `benchmarks/accuracy_dataset/` with image references rewritten from
+absolute `/root/lhy/paddleocr/...` paths to names relative to `images/`. The `latin`
+entry was dropped: it is a model prefix, not a language.
+
+### A defect the benchmark found
+
+Serbian failed on **both** images with `422 unsupported_language`. The round 2
+catalogue defined `sr-Latn` and `sr-Cyrl` but no bare `sr`, so callers using the
+plain ISO code were rejected even though PaddleOCR ships both Serbian models.
+PaddleOCR has no bare `sr` either, so it needed an explicit mapping: `sr` now
+resolves to `rs_latin`, the more common written form, with `sr-Cyrl` still
+available. Serbian scores 0.90 exact / 0.005 CER after the fix.
+
+### A defect in the measurement itself
+
+The first scorer reported `exact=1.00` alongside `cer≈0.6` for Greek and Dutch —
+self-contradictory. The cause was in the benchmark, not the service: it joined all
+lines and compared them positionally, so output that was perfectly correct but
+returned bottom-to-top was charged a large error rate. Detection order is not part
+of the API contract. The scorer now pairs each expected line with its closest
+recognised line before measuring; both languages score CER 0.000. Seventeen unit
+tests in `tests/unit/test_accuracy_scorer.py` pin this, including the exact Greek
+and Dutch sequences.
+
+### Results: 32 languages, 64 images, 0 failures
+
+Every language returns text. Perfect scores (`exact` 1.00, CER 0.000) for: af, be,
+cs, cy, de, el, en, es, et, fr, ga, it, lt, nl, oc, pl, pt, sk, sq, sw, uz, zh.
+
+Remaining variance, all traced to character confusions in the recogniser rather
+than to service behaviour:
+
+| Language | exact | CER | Cause |
+| --- | --- | --- | --- |
+| hr, hu, ru, sl, sr, th | 0.90 | ≤0.010 | one confusable character |
+| ja, ko | 0.80 | ≤0.033 | line segmentation on the denser image |
+| is | 0.73 | 0.022 | `þ` read as `p` |
+| uk | 0.73 | 0.024 | Cyrillic `О`/`С` read as Latin `O`/`C` |
+
+The Russian case is representative: `OCR распознавание` comes back with a Cyrillic
+`С` in place of the Latin `C`. One character, so `exact` drops to 0.80 while CER
+stays at 0.006 — which is why both metrics are reported.
+
+Languages that previously returned 503 for every request now score:
+
+| Language | exact | CER |
+| --- | --- | --- |
+| fr | 1.00 | 0.000 |
+| de | 1.00 | 0.000 |
+| es | 1.00 | 0.000 |
+| pt | 1.00 | 0.000 |
+| it | 1.00 | 0.000 |
+| nl | 1.00 | 0.000 |
+| ru | 0.90 | 0.006 |
+| be | 1.00 | 0.000 |
+| uk | 0.73 | 0.024 |
+
+### Fast checks
+
+| Command | Result |
+| --- | --- |
+| `ruff format --check .` | Passed, 37 files |
+| `ruff check .` | Passed |
+| `pytest -m "not integration"` | Passed, **125 tests** |
+| Language catalogue vs installed PaddleOCR | 78/78 resolve |
+
+### Caveat on these numbers
+
+The fixtures are synthetic and cleanly rendered, so the scores are an upper bound.
+They confirm each language is served end to end and will catch a regression in the
+language mapping; they say nothing about photographed documents, skew, handwriting
+or low resolution.
+
+---
+
 ## Round 2 — language mapping fix and packaging (2026-09-05)
 
 Host: macOS arm64 (Apple Silicon), Python 3.12.14, Docker server 29.7.2.

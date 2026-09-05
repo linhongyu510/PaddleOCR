@@ -171,6 +171,27 @@ This command may download model assets. Container commands and observed results 
 revision are recorded in [`docs/verification.md`](docs/verification.md). CI runs only fast,
 offline tests across Python 3.10–3.12.
 
+### Language accuracy benchmark
+
+Measures recognition accuracy per language against the labelled images in
+`benchmarks/accuracy_dataset`:
+
+```bash
+# A subset; the first run downloads that language's model
+python benchmarks/run_accuracy_benchmark.py --languages fr,de,ru
+
+# All 32 labelled languages
+python benchmarks/run_accuracy_benchmark.py
+
+# Or exercise a running deployment over HTTP
+python benchmarks/run_accuracy_benchmark.py --mode http --server http://localhost:8000
+```
+
+It reports `exact` (fraction of lines matched exactly) and `cer` (character error rate),
+both independent of detection order. Both are kept because a single confusable character
+can drop a line's `exact` to 0 while the text is otherwise correct. See
+[`benchmarks/accuracy_dataset/README.md`](benchmarks/accuracy_dataset/README.md).
+
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE), matching upstream PaddleOCR. Third-party

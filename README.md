@@ -172,6 +172,25 @@ POLYOCR_RUN_OCR_E2E=1 python -m pytest tests/integration/test_real_ocr.py -q
 [`docs/verification.md`](docs/verification.md)。CI 只运行不下载模型的快速测试，并在
 Python 3.10–3.12 上执行。
 
+### 语言准确率基准
+
+按语言实测识别准确率，对照 `benchmarks/accuracy_dataset` 中带标注文本的图片：
+
+```bash
+# 只测指定语言（首次运行会下载对应模型）
+python benchmarks/run_accuracy_benchmark.py --languages fr,de,ru
+
+# 全部 32 种带标注语言
+python benchmarks/run_accuracy_benchmark.py
+
+# 也可对运行中的服务发起 HTTP 实测
+python benchmarks/run_accuracy_benchmark.py --mode http --server http://localhost:8000
+```
+
+同时报告 `exact`（逐行完全匹配比例）和 `cer`（字符错误率），并且不受检测顺序影响。两个指标
+都保留是因为单个易混字符就能把某行的 `exact` 打到 0，而 `cer` 能反映实际差距有多小。数据集
+说明见 [`benchmarks/accuracy_dataset/README.md`](benchmarks/accuracy_dataset/README.md)。
+
 ## 许可证
 
 采用 [Apache License 2.0](LICENSE)，与上游 PaddleOCR 保持一致；第三方署名记录在

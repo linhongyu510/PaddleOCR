@@ -254,6 +254,27 @@ def test_language_codes_are_unique() -> None:
     assert len(codes) == len(set(codes))
 
 
+@pytest.mark.parametrize(
+    ("value", "expected_paddle_code"),
+    [
+        ("sr", "rs_latin"),
+        ("serbian", "rs_latin"),
+        ("sr-Latn", "rs_latin"),
+        ("sr-Cyrl", "rs_cyrillic"),
+        ("serbian-cyrillic", "rs_cyrillic"),
+    ],
+)
+def test_digraphic_serbian_resolves_for_bare_and_scripted_codes(
+    value: str, expected_paddle_code: str
+) -> None:
+    """Regression: bare `sr` was rejected because only `sr-Latn`/`sr-Cyrl` existed.
+
+    The accuracy benchmark surfaced this: every Serbian image failed with
+    `unsupported_language` even though PaddleOCR ships both Serbian models.
+    """
+    assert normalize_language(value) == expected_paddle_code
+
+
 def test_every_language_resolves_by_its_own_code_and_paddle_code() -> None:
     for language in supported_languages():
         assert resolve_language(language.code) is language

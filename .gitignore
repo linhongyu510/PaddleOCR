@@ -14,3 +14,4 @@ dist/
 .paddleocr/
 uploads/
 benchmark-results/
+benchmarks/results/

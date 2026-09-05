@@ -86,7 +86,16 @@ _LANGUAGES: tuple[Language, ...] = (
     Language("sk", "sk", "Slovenčina", "Latin", ("slovak",)),
     Language("sl", "sl", "Slovenščina", "Latin", ("slovenian",)),
     Language("sq", "sq", "Shqip", "Latin", ("albanian",)),
-    Language("sr-Latn", "rs_latin", "Srpski (latinica)", "Latin", ("serbian-latin",)),
+    # Serbian is digraphic. PaddleOCR has no bare `sr`, so the plain code is
+    # attached to the Latin variant, the more common written form today. Callers
+    # needing Cyrillic Serbian request `sr-Cyrl` explicitly.
+    Language(
+        "sr-Latn",
+        "rs_latin",
+        "Srpski (latinica)",
+        "Latin",
+        ("sr", "serbian", "serbian-latin", "塞尔维亚文", "塞尔维亚语"),
+    ),
     Language("sv", "sv", "Svenska", "Latin", ("swedish",)),
     Language("sw", "sw", "Kiswahili", "Latin", ("swahili",)),
     Language("tl", "tl", "Tagalog", "Latin", ("tagalog", "filipino")),

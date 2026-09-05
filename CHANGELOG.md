@@ -13,6 +13,10 @@ All notable changes to this project are documented here. This project follows
   PaddleOCR raised `ValueError: No models are available for lang='latin'` and the API
   returned `503 model_unavailable` for every such request. All languages are now mapped
   to codes PaddleOCR accepts, verified against the installed build.
+- **Serbian was unreachable by its ISO code.** The catalogue defined `sr-Latn` and
+  `sr-Cyrl` but no bare `sr`, so `language=sr` returned `422`. PaddleOCR has no bare
+  `sr` either, so it is now mapped explicitly to `rs_latin`, with `sr-Cyrl` still
+  available for Cyrillic Serbian. Found by the new accuracy benchmark.
 - An unknown `language` now returns `422 unsupported_language` at the request boundary
   instead of failing later during model loading.
 - A misconfigured `POLYOCR_DEFAULT_LANGUAGE` now fails at startup instead of making
@@ -33,14 +37,21 @@ All notable changes to this project are documented here. This project follows
   Latin, Cyrillic, Arabic, Devanagari, Thai, Greek, Georgian, Tamil and Telugu scripts.
 - Language aliases: `fr`, `french` and `法文` all resolve to French. `GET /v1/languages`
   now returns each language's PaddleOCR code, script and accepted aliases.
+- **Per-language accuracy benchmark** (`benchmarks/run_accuracy_benchmark.py`) scoring
+  recognition against ground truth, reporting exact line match and character error
+  rate independently of detection order. Runs in-process or over HTTP against a
+  deployment. Current results: 32 languages, 64 images, 0 failures.
+- 64 labelled images across 32 languages in `benchmarks/accuracy_dataset/`, recovered
+  from `accuracy_test/` on `main` with portable relative paths. The dated one-off run
+  reports that accompanied them were not carried over.
 - `polyocr-service` console entry point, so an installed distribution can be started
   without the `--factory` uvicorn invocation.
 - `py.typed` marker, so downstream type checkers use the package's annotations.
 - Packaging metadata: license expression, keywords, trove classifiers and project URLs.
-- 75 new tests (28 to 103), covering the language contract, boundary validation, the
-  packaging contract and the container's license handling. A new integration test
-  checks the language catalogue against real PaddleOCR metadata without downloading
-  model weights.
+- 97 new tests (28 to 125), covering the language contract, boundary validation, the
+  packaging contract, the container's license handling and the benchmark scorer. A new
+  integration test checks the language catalogue against real PaddleOCR metadata
+  without downloading model weights.
 - CI: `twine check` on built distributions, an offline language-catalogue job, and a
   container smoke test that asserts `/v1/health` responds.
 
