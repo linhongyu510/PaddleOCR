@@ -222,6 +222,34 @@ included specifically because a global operation cannot correct a lighting gradi
 lose. `preprocess=true` therefore returns `400 preprocess_unsupported` rather than being
 silently ignored. Full data in [`docs/robustness.md`](docs/robustness.md).
 
+### Real photograph benchmark
+
+Everything above is synthetic. This measures genuine phone captures — photographed
+receipts from [CORD-v2](https://huggingface.co/datasets/naver-clova-ix/cord-v2)
+(CC-BY-4.0) with human word-level transcriptions:
+
+```bash
+python benchmarks/run_photo_benchmark.py --limit 15 --compare-preprocess
+```
+
+| Metric | Synthetic | Real photographs |
+| --- | --- | --- |
+| mean score | 0.975 exact | **0.841 word recall** |
+
+**The synthetic numbers are optimistic by roughly 13 points** — previously stated only as
+a caveat, now measured. Four of fifteen images are read perfectly, nine score ≥0.727, and
+one badly faded thermal receipt scores 0.250.
+
+Three of five preprocessing pipelines have a *positive* mean on real photos, which looked
+like it might overturn the decision. Bootstrap testing over 20 000 resamples shows
+otherwise: **every 95% CI includes zero and the smallest p is 0.371**. The best-looking
+candidate, `combined` (+0.029), drops to **−0.018** once the single outlier image is
+excluded, and it harmed 6 of 15 images. The conclusion stands on a narrower basis: on real
+photographs preprocessing shows no statistically detectable benefit. Images are downloaded
+at runtime and never committed.
+
+Attribution: CORD-v2 is CC-BY-4.0, © NAVER CLOVA IX.
+
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE), matching upstream PaddleOCR. Third-party

@@ -150,17 +150,110 @@ document, and `preprocess=false` or omitting the field behaves as before. Failin
 loudly is deliberate: a caller who explicitly asks for preprocessing should not be
 told the request succeeded.
 
+## Real photographs
+
+Everything above uses synthetic fixtures. This section uses genuine phone captures:
+15 photographed receipts from [CORD-v2](https://huggingface.co/datasets/naver-clova-ix/cord-v2)
+(CC-BY-4.0) with human word-level transcriptions — hand shadows, creases, curled
+thermal paper, dark backgrounds, off-axis framing, resolutions from 432×648 to
+2304×4096.
+
+```bash
+python benchmarks/run_photo_benchmark.py --limit 15 --compare-preprocess
+```
+
+Scoring is order-independent **word recall**, not the line-based `exact` used
+elsewhere: CORD annotates individual words grouped by semantic role, so neither line
+order nor line grouping is a contract worth comparing against. Punctuation and
+thousands separators are normalised away, because `100,000` vs `100.000` says nothing
+about whether the text was read.
+
+| Metric | Synthetic | Real photographs |
+| --- | --- | --- |
+| mean score | 0.975 exact | **0.841 word recall** |
+
+**The synthetic numbers are optimistic by roughly 13 points.** This confirms in
+measurement what the earlier caveat only asserted. Per-image recall:
+
+| Image | Resolution | Words | Read | Recall |
+| --- | --- | --- | --- | --- |
+| cord_11 / cord_12 / cord_03 / cord_01 | various | 12–23 | all | 1.000 |
+| cord_06 | 864×1296 | 19 | 18 | 0.947 |
+| cord_08 | 864×1296 | 28 | 26 | 0.929 |
+| cord_00 / cord_04 | — | 23 | 21 | 0.913 |
+| cord_13 | 864×1296 | 24 | 21 | 0.875 |
+| cord_14 | 1836×3264 | 40 | 33 | 0.825 |
+| cord_02 | 864×1296 | 23 | 18 | 0.783 |
+| cord_10 | 576×864 | 13 | 10 | 0.769 |
+| cord_09 | 576×864 | 11 | 8 | 0.727 |
+| cord_05 | 2304×4096 | 16 | 11 | 0.688 |
+| **cord_07** | 576×864 | 16 | **4** | **0.250** |
+
+Four of fifteen are read perfectly; nine score ≥0.727. One image, `cord_07`, is a
+badly faded thermal receipt where recognition largely fails.
+
+### The preprocessing conclusion survives, but the reasoning changes
+
+On synthetic degradation every pipeline was clearly net negative. On real photographs
+three of five have a *positive* mean. That looked like it might overturn the decision,
+so it was tested rather than eyeballed — bootstrap 95% CI and two-sided p over 20 000
+resamples:
+
+| Pipeline | mean | Δ | 95% CI | p | helped | harmed |
+| --- | --- | --- | --- | --- | --- | --- |
+| (none) | 0.841 | — | — | — | — | — |
+| upscale | 0.848 | +0.007 | [−0.017, +0.037] | 0.773 | 1 | 1 |
+| sharpen | 0.868 | +0.027 | [−0.028, +0.087] | 0.371 | 6 | 3 |
+| autocontrast | 0.829 | −0.012 | [−0.065, +0.050] | 0.668 | 2 | 5 |
+| flatten | 0.852 | +0.011 | [−0.039, +0.068] | 0.721 | 4 | 4 |
+| combined | 0.870 | +0.029 | [−0.072, +0.152] | 0.656 | 5 | 6 |
+
+**Every confidence interval includes zero; no p is below 0.37.** With 15 images a
+few points of mean shift is ordinary sampling noise.
+
+`combined` shows this most clearly. Its +0.029 comes almost entirely from `cord_07`,
+where it gains +0.688 on the one image that was already failing. Drop that single
+image and `combined` becomes **−0.018** — the apparent benefit was one outlier, not an
+effect. It also harmed 6 of 15 images, including −0.357 on `cord_08`, which had been
+reading at 0.929.
+
+Two hypotheses for why `cord_07` responds to preprocessing were tested and both
+failed: global ink contrast correlates with recall at only **−0.262** (the
+*lowest*-contrast image scores 0.947), and local text-to-background contrast at
+**+0.027**. Neither explains it, so no mechanism is claimed here — `cord_07` is simply
+one hard image.
+
+So the decision stands, on a narrower and more honest basis than before: **on real
+photographs no preprocessing pipeline produces a statistically detectable improvement,
+and the best-looking candidate is driven by a single outlier while harming 6 of 15
+images.** Enabling it by default would trade reliable cases for one unreliable one.
+
+### What this does and does not establish
+
+It establishes that the synthetic estimate is ~13 points optimistic, and that
+preprocessing is not a free win on real captures. It does not establish that
+preprocessing could never help a *specific* known-bad input class; `cord_07` shows a
+faded receipt can respond. A caller who knows their inputs are uniformly degraded in
+one way is better served preprocessing on their side, where they can measure it
+against their own data, than by a service-wide default chosen from 15 images.
+
 ## Caveats
 
-Degradations are applied programmatically to cleanly-rendered synthetic fixtures. The
-`capture` tier models photograph and scan artifacts — directional blur, projective
-skew, illumination gradients, soft shadows, correlated paper grain — but simulation is
-not photography: real lenses vary sharpness across the frame, real sensors apply
-denoising and sharpening in the ISP, and real pages have creases and specular
-highlights. These numbers bound the failure envelope and support the preprocessing
-decision; they do not replace evaluation on genuinely photographed documents.
+Degradations in the tiers above are applied programmatically to cleanly-rendered
+synthetic fixtures. The `capture` tier models photograph and scan artifacts —
+directional blur, projective skew, illumination gradients, soft shadows, correlated
+paper grain — but simulation is not photography: real lenses vary sharpness across the
+frame, real sensors apply denoising and sharpening in the ISP, and real pages have
+creases and specular highlights. The **Real photographs** section above measures actual
+captures and puts a number on that gap (0.975 synthetic vs 0.841 real).
 
-The conclusion is tied to the PaddleOCR version above. The benchmark is kept in the
+The real-photograph sample is 15 images of receipts, in English and Indonesian, from a
+single dataset. It is enough to detect a ~13 point gap against synthetic fixtures and
+to show that no preprocessing pipeline is a significant win, but it is not a
+representative sample of document photography in general — no handwriting, no dense
+multi-column layouts, no other scripts under capture conditions.
+
+The conclusion is tied to the PaddleOCR version above. Both benchmarks are kept in the
 repository so it can be re-run against a future release rather than trusted
 indefinitely.
 

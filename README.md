@@ -215,6 +215,28 @@ python benchmarks/run_robustness_benchmark.py --compare-preprocess
 损失空间。因此 `preprocess=true` 返回 `400 preprocess_unsupported`，而不是静默忽略。
 完整数据见 [`docs/robustness.md`](docs/robustness.md)。
 
+### 真实照片基准
+
+以上都是合成图。这一项用真实手机拍摄的票据（CORD-v2，CC-BY-4.0，带人工逐词标注）实测：
+
+```bash
+python benchmarks/run_photo_benchmark.py --limit 15 --compare-preprocess
+```
+
+| 指标 | 合成图 | 真实照片 |
+| --- | --- | --- |
+| 平均分 | 0.975 exact | **0.841 词召回** |
+
+**合成图的分数偏乐观约 13 个点**——这是此前只作为「局限」声明、现在被量化的差距。15 张里
+4 张全对、9 张 ≥0.727，1 张（褪色热敏纸）仅 0.250。
+
+预处理在真实照片上有三种管线均值为**正**，看似要推翻结论，因此做了 bootstrap 检验：
+**五种管线的 95% 置信区间全部跨越 0，p 值最小 0.371**。表现最好的 `combined`（+0.029）
+去掉那 1 张离群图后变成 **−0.018**，且害了 15 张中的 6 张。结论因此维持，但依据更准确：
+真实照片上预处理**没有统计上可检测的收益**。图片在运行时下载，不入库。
+
+许可与归属：CORD-v2 数据集为 CC-BY-4.0，归属 NAVER CLOVA IX。
+
 ## 许可证
 
 采用 [Apache License 2.0](LICENSE)，与上游 PaddleOCR 保持一致；第三方署名记录在

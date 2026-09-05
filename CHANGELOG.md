@@ -3,6 +3,32 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Real photograph benchmark** (`benchmarks/run_photo_benchmark.py`) scoring genuine
+  phone captures — 15 photographed receipts from CORD-v2 (CC-BY-4.0) with human
+  word-level transcriptions — against order-independent word recall. Images are
+  downloaded at runtime into a gitignored directory and never committed, with a test
+  guarding that.
+
+### Measured
+
+- **The synthetic estimate is optimistic by ~13 points.** Real photographs score
+  **0.841** mean word recall against 0.975 exact on synthetic fixtures. Previously this
+  gap was only stated as a caveat; it is now measured. Four of fifteen images are read
+  perfectly, nine score ≥0.727, and one badly faded thermal receipt scores 0.250.
+- **The `preprocess` decision survives, with corrected reasoning.** On real photographs
+  three of five pipelines have a *positive* mean, unlike on synthetic degradation.
+  Bootstrap testing over 20 000 resamples shows every 95% CI includes zero, smallest
+  p = 0.371. The best-looking candidate, `combined` (+0.029), falls to −0.018 once a
+  single outlier image is excluded, and harmed 6 of 15 images including −0.357 on one
+  that had been reading at 0.929.
+- Two explanations for that outlier were tested and both failed: recall correlates with
+  global ink contrast at only −0.262 (the lowest-contrast image scores 0.947) and with
+  local text-to-background contrast at +0.027. No mechanism is claimed.
+
 ## [0.4.0] - 2026-09-05
 
 ### Fixed
