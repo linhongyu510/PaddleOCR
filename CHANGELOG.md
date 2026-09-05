@@ -15,6 +15,10 @@ All notable changes to this project are documented here. This project follows
   and omitting the field behave as before.
 - `benchmarks/run_benchmark.py` leaked a file handle per request by passing an
   unclosed `open()` into `requests.post`.
+- Release guards no longer import `tomllib`, which is stdlib only from 3.11 while the
+  project supports 3.10. A new AST-based check enforces the declared
+  `requires-python` floor so this class of break is caught by tests rather than by a
+  single failing CI job.
 
 ### Added
 
