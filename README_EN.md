@@ -194,24 +194,33 @@ can drop a line's `exact` to 0 while the text is otherwise correct. See
 
 ### Robustness benchmark
 
-Measures accuracy under controlled degradation (blur, compression, rotation, downscaling,
-noise, lighting and contrast):
+Measures accuracy under controlled degradation — blur, compression, rotation, downscaling,
+noise and lighting, plus capture-realistic artifacts (directional motion blur, projective
+skew, illumination gradients, soft shadows, paper grain):
 
 ```bash
 python benchmarks/run_robustness_benchmark.py --languages en,fr,ru,zh
+python benchmarks/run_robustness_benchmark.py --severity capture
 python benchmarks/run_robustness_benchmark.py --compare-preprocess
 ```
 
-Measured result: rotation, JPEG compression, brightness and contrast are essentially free
-(within 0.03 of the clean reference). Only two things break recognition — **blur beyond
-about σ2, and downscaling past roughly 25%** — and both fail by returning no text rather
-than confident nonsense.
+Measured result: rotation, perspective skew, JPEG compression, brightness, contrast,
+uneven illumination, soft shadows and paper texture are all essentially free — the
+combined "photograph of a page" case (perspective + gradient + grain + compression)
+scores 1.000. Only loss of glyph detail breaks recognition: blur beyond about σ2, and
+downscaling past roughly 25%.
 
-`preprocess` is **not implemented**. Four candidate pipelines (upscale, sharpen,
-autocontrast, combined) were measured across ten degradations and none was a net win;
-autocontrast dropped low-quality JPEG from 0.950 to 0.725. `preprocess=true` therefore
-returns `400 preprocess_unsupported` rather than being silently ignored. Full data in
-[`docs/robustness.md`](docs/robustness.md).
+**Motion blur is the one unsafe failure.** At 15px of travel the service returns
+confidently-scored nonsense rather than nothing (`Hello World` → `Heelco Ncotec`), which
+a caller cannot distinguish from a correct result. Up to 9px it is unaffected.
+
+`preprocess` is **not implemented**. Five candidate pipelines were measured across all 17
+degradations and every one is net negative; autocontrast harmed 11 of 17 (soft shadow
+−0.517, paper texture −0.450). Even a *local* `flatten` (divide by blurred background),
+included specifically because a global operation cannot correct a lighting gradient, lost
+— those cases already scored 0.975–1.000, so there was no headroom and only detail to
+lose. `preprocess=true` therefore returns `400 preprocess_unsupported` rather than being
+silently ignored. Full data in [`docs/robustness.md`](docs/robustness.md).
 
 ## License
 
