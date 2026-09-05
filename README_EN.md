@@ -192,6 +192,27 @@ both independent of detection order. Both are kept because a single confusable c
 can drop a line's `exact` to 0 while the text is otherwise correct. See
 [`benchmarks/accuracy_dataset/README.md`](benchmarks/accuracy_dataset/README.md).
 
+### Robustness benchmark
+
+Measures accuracy under controlled degradation (blur, compression, rotation, downscaling,
+noise, lighting and contrast):
+
+```bash
+python benchmarks/run_robustness_benchmark.py --languages en,fr,ru,zh
+python benchmarks/run_robustness_benchmark.py --compare-preprocess
+```
+
+Measured result: rotation, JPEG compression, brightness and contrast are essentially free
+(within 0.03 of the clean reference). Only two things break recognition — **blur beyond
+about σ2, and downscaling past roughly 25%** — and both fail by returning no text rather
+than confident nonsense.
+
+`preprocess` is **not implemented**. Four candidate pipelines (upscale, sharpen,
+autocontrast, combined) were measured across ten degradations and none was a net win;
+autocontrast dropped low-quality JPEG from 0.950 to 0.725. `preprocess=true` therefore
+returns `400 preprocess_unsupported` rather than being silently ignored. Full data in
+[`docs/robustness.md`](docs/robustness.md).
+
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE), matching upstream PaddleOCR. Third-party

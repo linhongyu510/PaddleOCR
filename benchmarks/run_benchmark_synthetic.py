@@ -15,7 +15,6 @@ def call(server, img_path: Path, language: str, api_key: str, score: float):
     }
     data = {
         'language': language,
-        'preprocess': 'true',
         'score_threshold': str(score)
     }
     headers = { 'Authorization': f'Bearer {api_key}' }

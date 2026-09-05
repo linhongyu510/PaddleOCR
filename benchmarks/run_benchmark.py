@@ -21,17 +21,15 @@ def load_manifest(path: Path):
     with open(path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
-def call_ocr(server: str, img_path: Path, language: str, preprocess: bool, score: float, api_key: str):
-    files = {
-        'file': (img_path.name, open(img_path, 'rb'), 'image/jpeg')
-    }
+def call_ocr(server: str, img_path: Path, language: str, score: float, api_key: str):
     data = {
         'language': language,
-        'preprocess': 'true' if preprocess else 'false',
         'score_threshold': str(score)
     }
     headers = { 'Authorization': f'Bearer {api_key}' }
-    resp = requests.post(f"{server}/v1/ocr", files=files, data=data, headers=headers, timeout=60)
+    with open(img_path, 'rb') as handle:
+        files = { 'file': (img_path.name, handle, 'image/jpeg') }
+        resp = requests.post(f"{server}/v1/ocr", files=files, data=data, headers=headers, timeout=60)
     resp.raise_for_status()
     return resp.json()
 
@@ -39,13 +37,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--server', default='http://localhost:8000')
     ap.add_argument('--score', type=float, default=0.5)
-    ap.add_argument('--preprocess', type=str, default='true')
     ap.add_argument('--api_key', default=os.getenv('POLYOCR_API_KEY', ''))
     ap.add_argument('--datasets', default=str((ROOT / 'benchmarks' / 'datasets' / 'manifest.json')))
     ap.add_argument('--out', default=str((ROOT / 'benchmarks' / 'results')))
     args = ap.parse_args()
 
-    preprocess = str(args.preprocess).lower() == 'true'
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -59,7 +55,7 @@ def main():
             img = Path(fp)
             try:
                 start = time.time()
-                res = call_ocr(args.server, img, lang, preprocess, args.score, args.api_key)
+                res = call_ocr(args.server, img, lang, args.score, args.api_key)
                 elapsed = time.time() - start
                 item = {
                     'image': str(img),

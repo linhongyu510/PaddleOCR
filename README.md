@@ -191,6 +191,23 @@ python benchmarks/run_accuracy_benchmark.py --mode http --server http://localhos
 都保留是因为单个易混字符就能把某行的 `exact` 打到 0，而 `cer` 能反映实际差距有多小。数据集
 说明见 [`benchmarks/accuracy_dataset/README.md`](benchmarks/accuracy_dataset/README.md)。
 
+### 鲁棒性基准
+
+在受控退化（模糊 / 压缩 / 旋转 / 缩小 / 噪点 / 明暗对比）下实测准确率：
+
+```bash
+python benchmarks/run_robustness_benchmark.py --languages en,fr,ru,zh
+python benchmarks/run_robustness_benchmark.py --compare-preprocess
+```
+
+实测结论：旋转、JPEG 压缩、明暗和对比度几乎不影响识别（相对干净图偏差 ≤0.03）；真正的失效
+只有两类——**模糊超过约 σ2、缩小到 25% 以下**。且失效时返回空结果而非错误文本。
+
+`preprocess` 参数**未实现**：实测四种预处理管线（放大 / 锐化 / 自动对比度 / 组合）在退化图上
+均无净收益，自动对比度甚至把低质量 JPEG 从 0.950 拉到 0.725。因此 `preprocess=true` 会返回
+`400 preprocess_unsupported`，而不是静默忽略。完整数据见
+[`docs/robustness.md`](docs/robustness.md)。
+
 ## 许可证
 
 采用 [Apache License 2.0](LICENSE)，与上游 PaddleOCR 保持一致；第三方署名记录在

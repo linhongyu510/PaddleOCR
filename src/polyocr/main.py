@@ -121,7 +121,23 @@ def create_app(
         score_threshold: Annotated[float, Form(ge=0, le=1)] = 0.5,
         _: Annotated[None, Depends(authenticated)] = None,
     ) -> OCRResponse:
-        del preprocess
+        # `preprocess` is accepted for backwards compatibility but not implemented.
+        # Measured on 17 degradation types, every candidate pipeline (upscale,
+        # unsharp mask, autocontrast, and combinations) was neutral or harmful:
+        # autocontrast dropped heavily-compressed images from 0.95 to 0.73 exact,
+        # and upscaling dropped small text from 0.53 to 0.32. PP-OCR already
+        # normalises internally. See docs/robustness.md.
+        #
+        # Rejecting an explicit `preprocess=true` is deliberate: silently ignoring
+        # it would let callers believe preprocessing happened.
+        if preprocess:
+            raise ServiceError(
+                "preprocess_unsupported",
+                "preprocess is not supported: PP-OCR normalises input internally and "
+                "measured preprocessing reduced accuracy. Omit the field or send false. "
+                "See docs/robustness.md.",
+                400,
+            )
         allowed_types = {"image/jpeg", "image/png", "image/webp", "image/tiff", "image/gif"}
         if file.content_type not in allowed_types:
             raise ServiceError(
