@@ -3,6 +3,32 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **`preprocess` was accepted and silently discarded.** `POST /v1/ocr` advertised a
+  `preprocess` flag in its OpenAPI schema, returned HTTP 200, then dropped it with
+  `del preprocess`. Callers had no way to tell that nothing happened, and three
+  scripts in `benchmarks/` sent `preprocess=true`. It now returns
+  `400 preprocess_unsupported` pointing at `docs/robustness.md`; `preprocess=false`
+  and omitting the field behave as before.
+- `benchmarks/run_benchmark.py` leaked a file handle per request by passing an
+  unclosed `open()` into `requests.post`.
+
+### Added
+
+- **Robustness benchmark** (`benchmarks/run_robustness_benchmark.py`) measuring
+  accuracy under 17 controlled degradations, with `--compare-preprocess` to score
+  candidate preprocessing pipelines. Findings in `docs/robustness.md`.
+- `docs/robustness.md`: measured failure profile and the evidence behind not
+  implementing `preprocess`. Rotation, JPEG compression, brightness and contrast cost
+  ≤0.03 exact against the clean reference; only blur beyond ~σ2 and downscaling past
+  ~25% break recognition, and both fail by returning no text rather than wrong text.
+  Of four preprocessing pipelines across ten degradations, none was a net win —
+  autocontrast dropped quality-5 JPEG from 0.950 to 0.725 exact, and upscaling dropped
+  25%-scale text from 0.550 to 0.367.
+
 ## [0.3.0] - 2026-09-05
 
 ### Fixed

@@ -170,3 +170,44 @@ def test_misconfigured_default_language_fails_at_startup() -> None:
             ocr_service=OCRService(lambda _language: FakeOCRBackend()),
         )
     assert exc.value.code == "unsupported_language"
+
+
+def test_preprocess_true_is_rejected_rather_than_silently_ignored() -> None:
+    """`preprocess` used to be accepted and discarded with `del`.
+
+    Callers got HTTP 200 and reasonably assumed preprocessing had happened. Measured
+    preprocessing reduced accuracy, so the field is not implemented; an explicit
+    request for it must fail loudly instead.
+    """
+    response = make_client().post(
+        "/v1/ocr",
+        headers={"X-API-Key": "test-secret"},
+        files={"file": ("image.png", png_bytes(), "image/png")},
+        data={"language": "en", "preprocess": "true", "score_threshold": "0.5"},
+    )
+    assert response.status_code == 400
+    body = response.json()["error"]
+    assert body["code"] == "preprocess_unsupported"
+    assert "robustness" in body["message"]
+
+
+@pytest.mark.parametrize("preprocess", ["false", "False", "0"])
+def test_preprocess_false_is_still_accepted(preprocess: str) -> None:
+    """Existing callers that send an explicit false must keep working."""
+    response = make_client().post(
+        "/v1/ocr",
+        headers={"X-API-Key": "test-secret"},
+        files={"file": ("image.png", png_bytes(), "image/png")},
+        data={"language": "en", "preprocess": preprocess, "score_threshold": "0.5"},
+    )
+    assert response.status_code == 200
+
+
+def test_omitting_preprocess_is_accepted() -> None:
+    response = make_client().post(
+        "/v1/ocr",
+        headers={"X-API-Key": "test-secret"},
+        files={"file": ("image.png", png_bytes(), "image/png")},
+        data={"language": "en", "score_threshold": "0.5"},
+    )
+    assert response.status_code == 200

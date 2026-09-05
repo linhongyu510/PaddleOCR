@@ -1,5 +1,82 @@
 # PolyOCR Service verification
 
+## Round 4 — robustness measurement and the `preprocess` flag (2026-09-05)
+
+Host: macOS arm64, Python 3.12.14, paddleocr 3.7.0, paddlepaddle 3.3.1.
+
+### A parameter that did nothing
+
+`POST /v1/ocr` accepted `preprocess`, advertised it in the OpenAPI schema, returned
+HTTP 200, and then dropped it:
+
+```python
+preprocess: Annotated[bool, Form()] = False,
+...
+del preprocess
+```
+
+Verified by instrumenting the backend: the identical array reaches the model with
+`preprocess=false` and `preprocess=true`. Three scripts under `benchmarks/` were
+sending `preprocess=true`, so this was a live misuse, not a hypothetical one.
+
+### Measured before deciding
+
+Rather than implement preprocessing on the assumption it helps, 17 degradations were
+measured across `en, fr, ru, zh`. Rotation, compression, brightness and contrast turned
+out to cost ≤0.03 exact against the clean reference of 0.975. Only two degradations
+break recognition:
+
+| Degradation | exact | cer | empty |
+| --- | --- | --- | --- |
+| blur σ4 | 0.125 | 0.795 | 4 |
+| blur σ6 | 0.000 | 1.000 | 2 |
+| 25% scale | 0.550 | 0.365 | 2 |
+| 15% scale | 0.000 | 0.980 | 5 |
+| blur σ3 + JPEG 10 | 0.375 | 0.530 | 2 |
+
+Four preprocessing pipelines were then scored on those failing cases. Improvements
+above 0.01 exact: upscale 4/10, sharpen 2/10, autocontrast 1/10, combined 1/10 — and
+each came with regressions elsewhere:
+
+| Case | off | upscale | autocontrast | combined |
+| --- | --- | --- | --- | --- |
+| JPEG 5 | 0.950 | −0.058 | **−0.225** | **−0.308** |
+| 25% scale | 0.550 | **−0.183** | −0.175 | −0.217 |
+| rotate 15° | 0.958 | +0.042 | **−0.308** | +0.017 |
+| blur σ3 + JPEG 10 | 0.375 | **−0.250** | **−0.375** | **−0.375** |
+
+Where a pipeline helped, the case was already unusable (blur σ4: 0.125 → 0.250). Where
+it hurt, it damaged cases that were working. So `preprocess` is not implemented, and
+`preprocess=true` now returns `400 preprocess_unsupported` rather than a misleading 200.
+Full data in [`docs/robustness.md`](robustness.md).
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| `ruff format --check .` / `ruff check .` | Passed, 37 files |
+| `pytest -m "not integration"` | Passed, **133 tests** (was 125) |
+| Robustness benchmark, packaged tool | Reproduced the findings independently |
+
+Against real models over HTTP with authentication enabled:
+
+| Request | Result |
+| --- | --- |
+| `preprocess` omitted | 200 — `Bonjour \| Test français \| Reconnaissance OCR` |
+| `preprocess=false` | 200 — identical text |
+| `preprocess=true` | 400 `preprocess_unsupported` |
+
+### Caveat
+
+Degradations are synthetic and applied programmatically. Real capture blur is
+directional rather than Gaussian, and photographs add perspective rather than pure
+rotation. These numbers bound the failure envelope on controlled inputs and support
+the preprocessing decision; they do not replace evaluation on real photographed
+documents. The conclusion is tied to paddleocr 3.7.0, which is why the benchmark
+ships with the repository.
+
+---
+
 ## Round 3 — per-language accuracy benchmark (2026-09-05)
 
 Host: macOS arm64, Python 3.12.14, paddleocr 3.7.0, paddlepaddle 3.3.1.

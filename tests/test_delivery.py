@@ -43,3 +43,30 @@ def test_readmes_document_the_console_entry_point() -> None:
     for name in ("README.md", "README_EN.md"):
         text = (ROOT / name).read_text(encoding="utf-8")
         assert "polyocr-service --host" in text
+
+
+def test_robustness_findings_are_documented() -> None:
+    """The preprocess rejection points callers at this document, so it must exist."""
+    doc = (ROOT / "docs" / "robustness.md").read_text(encoding="utf-8")
+    assert "preprocess" in doc
+    # The decision must be backed by numbers, not an assertion.
+    assert "autocontrast" in doc
+    assert "upscale" in doc
+    assert "0.950" in doc
+    assert "caveat" in doc.casefold()
+
+
+def test_readmes_document_the_robustness_benchmark_and_preprocess_decision() -> None:
+    for name in ("README.md", "README_EN.md"):
+        text = (ROOT / name).read_text(encoding="utf-8")
+        assert "run_robustness_benchmark.py" in text
+        assert "preprocess_unsupported" in text
+        assert "docs/robustness.md" in text
+
+
+def test_no_benchmark_script_sends_the_unsupported_preprocess_field() -> None:
+    """These scripts sent preprocess=true, which now returns 400."""
+    for script in (ROOT / "benchmarks").glob("*.py"):
+        source = script.read_text(encoding="utf-8")
+        assert "'preprocess'" not in source, f"{script.name} still sends preprocess"
+        assert '"preprocess"' not in source, f"{script.name} still sends preprocess"
