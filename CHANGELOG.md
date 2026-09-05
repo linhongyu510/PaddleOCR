@@ -3,7 +3,7 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.0] - 2026-09-05
 
 ### Fixed
 
@@ -19,15 +19,33 @@ All notable changes to this project are documented here. This project follows
 ### Added
 
 - **Robustness benchmark** (`benchmarks/run_robustness_benchmark.py`) measuring
-  accuracy under 17 controlled degradations, with `--compare-preprocess` to score
-  candidate preprocessing pipelines. Findings in `docs/robustness.md`.
+  accuracy under 17 controlled degradations across three tiers — `moderate`, `severe`
+  and `capture` — with `--compare-preprocess` to score candidate preprocessing
+  pipelines. Findings in `docs/robustness.md`.
+- `capture` tier modelling photograph and scan artifacts that global gaussian
+  degradation does not reproduce: directional motion blur, projective skew,
+  illumination gradients, soft shadows and correlated paper grain.
 - `docs/robustness.md`: measured failure profile and the evidence behind not
-  implementing `preprocess`. Rotation, JPEG compression, brightness and contrast cost
-  ≤0.03 exact against the clean reference; only blur beyond ~σ2 and downscaling past
-  ~25% break recognition, and both fail by returning no text rather than wrong text.
-  Of four preprocessing pipelines across ten degradations, none was a net win —
-  autocontrast dropped quality-5 JPEG from 0.950 to 0.725 exact, and upscaling dropped
-  25%-scale text from 0.550 to 0.367.
+  implementing `preprocess`.
+
+### Measured
+
+- PP-OCR is unaffected by geometry and lighting. Rotation, perspective skew, JPEG
+  quality 5, uneven illumination, soft shadow and paper texture all score 0.950–1.000
+  exact against a clean reference of 0.975. The combined photograph case (perspective +
+  gradient + grain + compression) scores 1.000.
+- Only loss of glyph detail breaks recognition: gaussian blur beyond ~σ2, and
+  downscaling past ~25%.
+- **Motion blur is the one unsafe failure mode.** At 15px of travel the service returns
+  confidently-scored wrong text rather than an empty result (`Hello World` →
+  `Heelco Ncotec`), which a caller cannot distinguish from success. Up to 9px is
+  unaffected. This corrects the earlier claim that degradation past the limit always
+  yields empty output.
+- All five preprocessing pipelines are net negative over 17 degradations: autocontrast
+  −0.166 mean Δexact (harmed 11/17), combined −0.124, flatten −0.024, upscale −0.022,
+  sharpen −0.007. A *local* illumination-flattening pass was included specifically
+  because a global operation cannot correct a lighting gradient; it still lost, because
+  the cases it targets already scored 0.975–1.000.
 
 ## [0.3.0] - 2026-09-05
 

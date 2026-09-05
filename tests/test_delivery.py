@@ -56,12 +56,52 @@ def test_robustness_findings_are_documented() -> None:
     assert "caveat" in doc.casefold()
 
 
+def test_robustness_doc_records_the_capture_tier_and_motion_blur_hazard() -> None:
+    """Motion blur returns wrong text rather than nothing; that must stay documented."""
+    doc = (ROOT / "docs" / "robustness.md").read_text(encoding="utf-8")
+    for term in ("motion blur", "perspective", "uneven illumination", "paper texture"):
+        assert term in doc.casefold(), term
+    # The unsafe failure mode is the single most important caller-facing finding.
+    assert "Heelco Ncotec" in doc, "the observed wrong-text output should be quoted"
+    assert "flatten" in doc, "the local illumination pipeline result should be recorded"
+
+
+def test_robustness_benchmark_exposes_the_capture_tier() -> None:
+    source = (ROOT / "benchmarks" / "run_robustness_benchmark.py").read_text(encoding="utf-8")
+    assert '"capture"' in source
+    for name in ("_motion_blur", "_perspective", "_uneven_illumination", "_shadow"):
+        assert f"def {name}" in source, name
+
+
+def test_robustness_benchmark_does_not_write_into_a_read_only_pil_buffer() -> None:
+    """`np.asarray(pil_image)` is read-only; in-place writes raise ValueError.
+
+    Only bare `np.asarray(...)` bound to a name is a hazard — a chained `.astype()`
+    copies, so that form is safe and must not be flagged.
+    """
+    import re
+
+    source = (ROOT / "benchmarks" / "run_robustness_benchmark.py").read_text(encoding="utf-8")
+    hazards = [
+        line.strip()
+        for line in source.splitlines()
+        if re.search(r"=\s*np\.asarray\([^)]*\)\s*$", line)
+    ]
+    assert not hazards, f"assign a writable copy via np.array() instead: {hazards}"
+
+
 def test_readmes_document_the_robustness_benchmark_and_preprocess_decision() -> None:
     for name in ("README.md", "README_EN.md"):
         text = (ROOT / name).read_text(encoding="utf-8")
         assert "run_robustness_benchmark.py" in text
         assert "preprocess_unsupported" in text
         assert "docs/robustness.md" in text
+
+
+def test_readmes_warn_about_the_motion_blur_failure_mode() -> None:
+    for name in ("README.md", "README_EN.md"):
+        text = (ROOT / name).read_text(encoding="utf-8")
+        assert "Heelco Ncotec" in text, f"{name} should warn about wrong-text output"
 
 
 def test_no_benchmark_script_sends_the_unsupported_preprocess_field() -> None:

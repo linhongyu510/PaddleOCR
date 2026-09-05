@@ -193,20 +193,27 @@ python benchmarks/run_accuracy_benchmark.py --mode http --server http://localhos
 
 ### 鲁棒性基准
 
-在受控退化（模糊 / 压缩 / 旋转 / 缩小 / 噪点 / 明暗对比）下实测准确率：
+在受控退化（模糊 / 压缩 / 旋转 / 缩小 / 噪点 / 明暗对比，以及运动模糊 / 透视 / 不均匀光照 /
+阴影 / 纸张纹理等拍摄类退化）下实测准确率：
 
 ```bash
 python benchmarks/run_robustness_benchmark.py --languages en,fr,ru,zh
+python benchmarks/run_robustness_benchmark.py --severity capture
 python benchmarks/run_robustness_benchmark.py --compare-preprocess
 ```
 
-实测结论：旋转、JPEG 压缩、明暗和对比度几乎不影响识别（相对干净图偏差 ≤0.03）；真正的失效
-只有两类——**模糊超过约 σ2、缩小到 25% 以下**。且失效时返回空结果而非错误文本。
+实测结论：旋转、透视、JPEG 压缩、明暗对比、不均匀光照、阴影、纸张纹理几乎都不影响识别——
+「透视 + 光照渐变 + 纹理 + 压缩」的组合拍照场景反而是满分。真正的失效只有**细节丢失**一类：
+模糊超过约 σ2、缩小到 25% 以下。
 
-`preprocess` 参数**未实现**：实测四种预处理管线（放大 / 锐化 / 自动对比度 / 组合）在退化图上
-均无净收益，自动对比度甚至把低质量 JPEG 从 0.950 拉到 0.725。因此 `preprocess=true` 会返回
-`400 preprocess_unsupported`，而不是静默忽略。完整数据见
-[`docs/robustness.md`](docs/robustness.md)。
+**唯一需要警惕的是运动模糊**：15px 位移下会返回**置信度正常的错误文本**（`Hello World` →
+`Heelco Ncotec`），而非空结果，调用方无法区分。9px 以内完全正常。
+
+`preprocess` 参数**未实现**：五种预处理管线在全部 17 种退化上均为净负收益，自动对比度在
+17 项里害了 11 项（软阴影 −0.517、纸张纹理 −0.450）。连专门针对不均匀光照的局部
+`flatten`（除以模糊背景）也是负的——因为那些场景本来就有 0.975~1.000，没有提升空间只有
+损失空间。因此 `preprocess=true` 返回 `400 preprocess_unsupported`，而不是静默忽略。
+完整数据见 [`docs/robustness.md`](docs/robustness.md)。
 
 ## 许可证
 

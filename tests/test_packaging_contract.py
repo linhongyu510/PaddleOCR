@@ -92,3 +92,29 @@ def test_app_reports_the_package_version() -> None:
         ocr_service=OCRService(lambda _language: Backend()),
     )
     assert app.version == polyocr.__version__
+
+
+def test_packaged_version_has_a_changelog_entry() -> None:
+    """A released version must be documented.
+
+    Guards against tagging a release whose notes are still sitting under
+    `[Unreleased]`, which is how 0.3.0 shipped untagged.
+    """
+    import tomllib
+
+    declared = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    version = declared["project"]["version"]
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert f"## [{version}]" in changelog, (
+        f"version {version} has no CHANGELOG entry; it is probably still under [Unreleased]"
+    )
+
+
+def test_changelog_versions_are_ordered_newest_first() -> None:
+    import re
+
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    found = re.findall(r"^## \[(\d+)\.(\d+)\.(\d+)\]", changelog, re.MULTILINE)
+    versions = [tuple(int(part) for part in item) for item in found]
+    assert versions, "no released versions in CHANGELOG"
+    assert versions == sorted(versions, reverse=True), f"out of order: {versions}"
