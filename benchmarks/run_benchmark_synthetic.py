@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 import time
 from pathlib import Path
 import argparse
@@ -15,7 +16,7 @@ def call(server, img_path: Path, language: str, api_key: str, score: float):
     data = {
         'language': language,
         'preprocess': 'true',
-        'score': str(score)
+        'score_threshold': str(score)
     }
     headers = { 'Authorization': f'Bearer {api_key}' }
     r = requests.post(f"{server}/v1/ocr", files=files, data=data, headers=headers, timeout=120)
@@ -25,8 +26,8 @@ def call(server, img_path: Path, language: str, api_key: str, score: float):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--server', default='http://43.137.12.144:16110')
-    ap.add_argument('--api_key', default='PolyNex-PolyOCR-2025xm')
+    ap.add_argument('--server', default='http://localhost:8000')
+    ap.add_argument('--api_key', default=os.getenv('POLYOCR_API_KEY', ''))
     ap.add_argument('--manifest', default='benchmarks/synthetic/manifest.json')
     ap.add_argument('--out', default='benchmarks/synthetic_results.json')
     ap.add_argument('--score', type=float, default=0.5)
@@ -43,7 +44,7 @@ def main():
         start = time.time()
         res = call(args.server, path, lang, args.api_key, args.score)
         elapsed = time.time() - start
-        data = res.get('data', []) if isinstance(res, dict) else []
+        data = res.get('items', []) if isinstance(res, dict) else []
         texts = [d.get('text', '') for d in data if isinstance(d, dict)]
         non_empty = any(t.strip() for t in texts)
         detailed.append({

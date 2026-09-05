@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PolyOCR Service</title>
+  <style>
+    body { max-width: 760px; margin: 3rem auto; padding: 0 1rem; font: 16px system-ui; }
+    form { display: grid; gap: .8rem; }
+    input, button, select { padding: .7rem; }
+    pre { white-space: pre-wrap; background: #f4f4f4; padding: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>PolyOCR Service</h1>
+  <p>上传图片进行文字识别。API Key 只保存在当前页面内存中。</p>
+  <form id="ocr-form">
+    <input id="api-key" type="password" autocomplete="off" placeholder="API Key" required>
+    <input id="image" type="file" accept="image/*" required>
+    <select id="language"><option value="ch">中文</option><option value="en">English</option></select>
+    <button type="submit">识别</button>
+  </form>
+  <pre id="result" aria-live="polite"></pre>
+  <script>
+    const form = document.querySelector("#ocr-form");
+    const result = document.querySelector("#result");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      result.textContent = "处理中…";
+      const body = new FormData();
+      body.append("file", document.querySelector("#image").files[0]);
+      body.append("language", document.querySelector("#language").value);
+      body.append("score_threshold", "0.5");
+      try {
+        const response = await fetch("/v1/ocr", {
+          method: "POST",
+          headers: {"X-API-Key": document.querySelector("#api-key").value},
+          body
+        });
+        const payload = await response.json();
+        result.textContent = JSON.stringify(payload, null, 2);
+      } catch {
+        result.textContent = "请求失败。";
+      }
+    });
+  </script>
+</body>
+</html>

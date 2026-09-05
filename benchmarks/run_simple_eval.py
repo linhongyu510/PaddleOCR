@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 
 """
-对 simple_dataset 中的每种语言 1 张图调用 16110 /v1/ocr，
+对 simple_dataset 中的每种语言 1 张图调用服务的 /v1/ocr（默认 http://localhost:8000，可用 --server 覆盖），
 计算简单准确率（是否至少包含目标语言关键短语/是否非空），并输出耗时等指标。
 为了避免语言特定 GOLD 依赖，这里以“是否非空文本”为基础，
 并返回原始结果供人工核对。
 """
 
 import json
+import os
 import time
 import argparse
 from pathlib import Path
@@ -21,7 +22,7 @@ def call(server, img_path: Path, language: str, api_key: str, score: float):
     data = {
         'language': language,
         'preprocess': 'true',
-        'score': str(score)
+        'score_threshold': str(score)
     }
     headers = { 'Authorization': f'Bearer {api_key}' }
     r = requests.post(f"{server}/v1/ocr", files=files, data=data, headers=headers, timeout=60)
@@ -30,8 +31,8 @@ def call(server, img_path: Path, language: str, api_key: str, score: float):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--server', default='http://43.137.12.144:16110')
-    ap.add_argument('--api_key', default='PolyNex-PolyOCR-2025xm')
+    ap.add_argument('--server', default='http://localhost:8000')
+    ap.add_argument('--api_key', default=os.getenv('POLYOCR_API_KEY', ''))
     ap.add_argument('--dataset', default='benchmarks/simple_dataset/simple_manifest.json')
     ap.add_argument('--out', default='benchmarks/simple_results.json')
     ap.add_argument('--score', type=float, default=0.5)
@@ -47,7 +48,7 @@ def main():
         start = time.time()
         res = call(args.server, path, lang, args.api_key, args.score)
         elapsed = time.time() - start
-        data = res.get('data', []) if isinstance(res, dict) else []
+        data = res.get('items', []) if isinstance(res, dict) else []
         texts = [d.get('text', '') for d in data if isinstance(d, dict)]
         non_empty = any(t.strip() for t in texts)
         results.append({
@@ -75,5 +76,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 

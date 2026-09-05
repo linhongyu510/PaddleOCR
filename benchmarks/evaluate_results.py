@@ -14,6 +14,33 @@ import json
 from pathlib import Path
 import argparse
 
+def extract_items(res):
+    """Return the recognised items from an OCR response.
+
+    The current API returns ``items``; older builds of this service returned
+    ``data``. Both are accepted so previously captured result files stay
+    readable.
+    """
+    if not isinstance(res, dict):
+        return []
+    for key in ('items', 'data'):
+        value = res.get(key)
+        if isinstance(value, list):
+            return [item for item in value if isinstance(item, dict)]
+    return []
+
+
+def is_success(res):
+    """A response succeeded if it carries no error object."""
+    if not isinstance(res, dict):
+        return False
+    if 'error' in res:
+        return False
+    if 'code' in res:
+        return res.get('code') == 0
+    return 'items' in res or 'data' in res
+
+
 def stat_lang(dir_path: Path):
     fp = dir_path / 'results.json'
     if not fp.exists():
@@ -26,14 +53,11 @@ def stat_lang(dir_path: Path):
     text_len_sum = 0
     for it in items:
         res = it.get('response')
-        if isinstance(res, dict) and res.get('code') == 0:
+        if is_success(res):
             success += 1
             elapsed_sum += float(it.get('elapsed', 0.0))
-            data = res.get('data', [])
-            # data 为列表，每项含 text
-            if isinstance(data, list):
-                texts = [d.get('text', '') for d in data if isinstance(d, dict)]
-                text_len_sum += sum(len(t) for t in texts)
+            texts = [str(d.get('text', '')) for d in extract_items(res)]
+            text_len_sum += sum(len(t) for t in texts)
     if total == 0:
         return None
     return {

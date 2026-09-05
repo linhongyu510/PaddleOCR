@@ -1,0 +1,674 @@
+{
+  "af": {
+    "description": "Afrikaans OCR Test",
+    "expected_texts": {
+      "test_af_3texts.jpg": [
+        "Hallo Wêreld",
+        "Afrikaanse toets",
+        "OCR herkenning"
+      ],
+      "test_af_5texts.jpg": [
+        "Hallo Wêreld",
+        "Afrikaanse toets",
+        "OCR herkenning",
+        "Meertalige ondersteuning",
+        "Teksonttrekking uit beeld"
+      ]
+    },
+    "images": [
+      "test_af_3texts.jpg",
+      "test_af_5texts.jpg"
+    ]
+  },
+  "be": {
+    "description": "Belarusian OCR Test",
+    "expected_texts": {
+      "test_be_3texts.jpg": [
+        "Прывітанне Свет",
+        "Беларускі тэст",
+        "OCR распазнаванне"
+      ],
+      "test_be_5texts.jpg": [
+        "Прывітанне Свет",
+        "Беларускі тэст",
+        "OCR распазнаванне",
+        "Шматмоўная падтрымка",
+        "Выцягванне тэксту з выявы"
+      ]
+    },
+    "images": [
+      "test_be_3texts.jpg",
+      "test_be_5texts.jpg"
+    ]
+  },
+  "cs": {
+    "description": "Czech OCR Test",
+    "expected_texts": {
+      "test_cs_3texts.jpg": [
+        "Ahoj Světe",
+        "Český test",
+        "OCR rozpoznávání"
+      ],
+      "test_cs_5texts.jpg": [
+        "Ahoj Světe",
+        "Český test",
+        "OCR rozpoznávání",
+        "Vícejazyčná podpora",
+        "Extrakce textu z obrázku"
+      ]
+    },
+    "images": [
+      "test_cs_3texts.jpg",
+      "test_cs_5texts.jpg"
+    ]
+  },
+  "cy": {
+    "description": "Welsh OCR Test",
+    "expected_texts": {
+      "test_cy_3texts.jpg": [
+        "Helo Byd",
+        "Prawf Cymraeg",
+        "Adnabod OCR"
+      ],
+      "test_cy_5texts.jpg": [
+        "Helo Byd",
+        "Prawf Cymraeg",
+        "Adnabod OCR",
+        "Cefnogaeth amlieithog",
+        "Echdynnu testun o ddelwedd"
+      ]
+    },
+    "images": [
+      "test_cy_3texts.jpg",
+      "test_cy_5texts.jpg"
+    ]
+  },
+  "de": {
+    "description": "German OCR Test",
+    "expected_texts": {
+      "test_de_3texts.jpg": [
+        "Hallo Welt",
+        "Deutscher Test",
+        "OCR-Erkennung"
+      ],
+      "test_de_5texts.jpg": [
+        "Hallo Welt",
+        "Deutscher Test",
+        "OCR-Erkennung",
+        "Mehrsprachige Unterstützung",
+        "Bildtext-Extraktion"
+      ]
+    },
+    "images": [
+      "test_de_3texts.jpg",
+      "test_de_5texts.jpg"
+    ]
+  },
+  "el": {
+    "description": "Greek OCR Test",
+    "expected_texts": {
+      "test_el_3texts.jpg": [
+        "Γεια σας Κόσμε",
+        "Ελληνικό τεστ",
+        "OCR αναγνώριση"
+      ],
+      "test_el_5texts.jpg": [
+        "Γεια σας Κόσμε",
+        "Ελληνικό τεστ",
+        "OCR αναγνώριση",
+        "Πολύγλωσση υποστήριξη",
+        "Εξαγωγή κειμένου από εικόνα"
+      ]
+    },
+    "images": [
+      "test_el_3texts.jpg",
+      "test_el_5texts.jpg"
+    ]
+  },
+  "en": {
+    "description": "English OCR Test",
+    "expected_texts": {
+      "test_en_3texts.jpg": [
+        "Hello World",
+        "OCR Test",
+        "English Text Recognition"
+      ],
+      "test_en_5texts.jpg": [
+        "Hello World",
+        "OCR Test",
+        "English Text Recognition",
+        "Multi-language Support",
+        "Image Text Extraction"
+      ]
+    },
+    "images": [
+      "test_en_3texts.jpg",
+      "test_en_5texts.jpg"
+    ]
+  },
+  "es": {
+    "description": "Spanish OCR Test",
+    "expected_texts": {
+      "test_es_3texts.jpg": [
+        "Hola Mundo",
+        "Prueba española",
+        "Reconocimiento OCR"
+      ],
+      "test_es_5texts.jpg": [
+        "Hola Mundo",
+        "Prueba española",
+        "Reconocimiento OCR",
+        "Soporte multilingüe",
+        "Extracción de texto de imagen"
+      ]
+    },
+    "images": [
+      "test_es_3texts.jpg",
+      "test_es_5texts.jpg"
+    ]
+  },
+  "et": {
+    "description": "Estonian OCR Test",
+    "expected_texts": {
+      "test_et_3texts.jpg": [
+        "Tere Maailm",
+        "Eesti test",
+        "OCR tuvastamine"
+      ],
+      "test_et_5texts.jpg": [
+        "Tere Maailm",
+        "Eesti test",
+        "OCR tuvastamine",
+        "Mitmekeelne tugi",
+        "Teksti eraldamine pildist"
+      ]
+    },
+    "images": [
+      "test_et_3texts.jpg",
+      "test_et_5texts.jpg"
+    ]
+  },
+  "fr": {
+    "description": "French OCR Test",
+    "expected_texts": {
+      "test_fr_3texts.jpg": [
+        "Bonjour",
+        "Test français",
+        "Reconnaissance OCR"
+      ],
+      "test_fr_5texts.jpg": [
+        "Bonjour",
+        "Test français",
+        "Reconnaissance OCR",
+        "Support multilingue",
+        "Extraction de texte d'image"
+      ]
+    },
+    "images": [
+      "test_fr_3texts.jpg",
+      "test_fr_5texts.jpg"
+    ]
+  },
+  "ga": {
+    "description": "Irish OCR Test",
+    "expected_texts": {
+      "test_ga_3texts.jpg": [
+        "Dia dhuit Domhan",
+        "Tástáil Gaeilge",
+        "Aithint OCR"
+      ],
+      "test_ga_5texts.jpg": [
+        "Dia dhuit Domhan",
+        "Tástáil Gaeilge",
+        "Aithint OCR",
+        "Tacaíocht ilteangach",
+        "Aisghabháil téacs ó íomhá"
+      ]
+    },
+    "images": [
+      "test_ga_3texts.jpg",
+      "test_ga_5texts.jpg"
+    ]
+  },
+  "hr": {
+    "description": "Croatian OCR Test",
+    "expected_texts": {
+      "test_hr_3texts.jpg": [
+        "Pozdrav Svijete",
+        "Hrvatski test",
+        "OCR prepoznavanje"
+      ],
+      "test_hr_5texts.jpg": [
+        "Pozdrav Svijete",
+        "Hrvatski test",
+        "OCR prepoznavanje",
+        "Višejezična podrška",
+        "Izdvajanje teksta iz slike"
+      ]
+    },
+    "images": [
+      "test_hr_3texts.jpg",
+      "test_hr_5texts.jpg"
+    ]
+  },
+  "hu": {
+    "description": "Hungarian OCR Test",
+    "expected_texts": {
+      "test_hu_3texts.jpg": [
+        "Helló Világ",
+        "Magyar teszt",
+        "OCR felismerés"
+      ],
+      "test_hu_5texts.jpg": [
+        "Helló Világ",
+        "Magyar teszt",
+        "OCR felismerés",
+        "Többnyelvű támogatás",
+        "Szöveg kinyerése képből"
+      ]
+    },
+    "images": [
+      "test_hu_3texts.jpg",
+      "test_hu_5texts.jpg"
+    ]
+  },
+  "is": {
+    "description": "Icelandic OCR Test",
+    "expected_texts": {
+      "test_is_3texts.jpg": [
+        "Halló Heimur",
+        "Íslenskt próf",
+        "OCR þekking"
+      ],
+      "test_is_5texts.jpg": [
+        "Halló Heimur",
+        "Íslenskt próf",
+        "OCR þekking",
+        "Fjöltyngd stuðningur",
+        "Textaútdráttur úr mynd"
+      ]
+    },
+    "images": [
+      "test_is_3texts.jpg",
+      "test_is_5texts.jpg"
+    ]
+  },
+  "it": {
+    "description": "Italian OCR Test",
+    "expected_texts": {
+      "test_it_3texts.jpg": [
+        "Ciao Mondo",
+        "Test italiano",
+        "Riconoscimento OCR"
+      ],
+      "test_it_5texts.jpg": [
+        "Ciao Mondo",
+        "Test italiano",
+        "Riconoscimento OCR",
+        "Supporto multilingue",
+        "Estrazione testo da immagine"
+      ]
+    },
+    "images": [
+      "test_it_3texts.jpg",
+      "test_it_5texts.jpg"
+    ]
+  },
+  "ja": {
+    "description": "Japanese OCR Test",
+    "expected_texts": {
+      "test_ja_3texts.jpg": [
+        "こんにちは",
+        "日本語テスト",
+        "OCR認識テスト"
+      ],
+      "test_ja_5texts.jpg": [
+        "こんにちは",
+        "日本語テスト",
+        "OCR認識テスト",
+        "多言語対応",
+        "画像文字抽出"
+      ]
+    },
+    "images": [
+      "test_ja_3texts.jpg",
+      "test_ja_5texts.jpg"
+    ]
+  },
+  "ko": {
+    "description": "Korean OCR Test",
+    "expected_texts": {
+      "test_ko_3texts.jpg": [
+        "안녕하세요",
+        "한국어 테스트",
+        "OCR 인식 테스트"
+      ],
+      "test_ko_5texts.jpg": [
+        "안녕하세요",
+        "한국어 테스트",
+        "OCR 인식 테스트",
+        "다국어 지원",
+        "이미지 텍스트 추출"
+      ]
+    },
+    "images": [
+      "test_ko_3texts.jpg",
+      "test_ko_5texts.jpg"
+    ]
+  },
+  "lt": {
+    "description": "Lithuanian OCR Test",
+    "expected_texts": {
+      "test_lt_3texts.jpg": [
+        "Sveikas Pasauli",
+        "Lietuvių testas",
+        "OCR atpažinimas"
+      ],
+      "test_lt_5texts.jpg": [
+        "Sveikas Pasauli",
+        "Lietuvių testas",
+        "OCR atpažinimas",
+        "Daugiakalbė palaikymas",
+        "Teksto ištraukimas iš paveikslėlio"
+      ]
+    },
+    "images": [
+      "test_lt_3texts.jpg",
+      "test_lt_5texts.jpg"
+    ]
+  },
+  "nl": {
+    "description": "Dutch OCR Test",
+    "expected_texts": {
+      "test_nl_3texts.jpg": [
+        "Hallo Wereld",
+        "Nederlandse test",
+        "OCR herkenning"
+      ],
+      "test_nl_5texts.jpg": [
+        "Hallo Wereld",
+        "Nederlandse test",
+        "OCR herkenning",
+        "Meertalige ondersteuning",
+        "Tekstextractie uit afbeelding"
+      ]
+    },
+    "images": [
+      "test_nl_3texts.jpg",
+      "test_nl_5texts.jpg"
+    ]
+  },
+  "oc": {
+    "description": "Occitan OCR Test",
+    "expected_texts": {
+      "test_oc_3texts.jpg": [
+        "Adieu Mond",
+        "Tèst occitan",
+        "Reconocença OCR"
+      ],
+      "test_oc_5texts.jpg": [
+        "Adieu Mond",
+        "Tèst occitan",
+        "Reconocença OCR",
+        "Supòrt multilengue",
+        "Extraccion de tèxte d'imatge"
+      ]
+    },
+    "images": [
+      "test_oc_3texts.jpg",
+      "test_oc_5texts.jpg"
+    ]
+  },
+  "pl": {
+    "description": "Polish OCR Test",
+    "expected_texts": {
+      "test_pl_3texts.jpg": [
+        "Cześć Świecie",
+        "Test polski",
+        "Rozpoznawanie OCR"
+      ],
+      "test_pl_5texts.jpg": [
+        "Cześć Świecie",
+        "Test polski",
+        "Rozpoznawanie OCR",
+        "Wsparcie wielojęzyczne",
+        "Ekstrakcja tekstu z obrazu"
+      ]
+    },
+    "images": [
+      "test_pl_3texts.jpg",
+      "test_pl_5texts.jpg"
+    ]
+  },
+  "pt": {
+    "description": "Portuguese OCR Test",
+    "expected_texts": {
+      "test_pt_3texts.jpg": [
+        "Olá Mundo",
+        "Teste português",
+        "Reconhecimento OCR"
+      ],
+      "test_pt_5texts.jpg": [
+        "Olá Mundo",
+        "Teste português",
+        "Reconhecimento OCR",
+        "Suporte multilíngue",
+        "Extração de texto de imagem"
+      ]
+    },
+    "images": [
+      "test_pt_3texts.jpg",
+      "test_pt_5texts.jpg"
+    ]
+  },
+  "ru": {
+    "description": "Russian OCR Test",
+    "expected_texts": {
+      "test_ru_3texts.jpg": [
+        "Привет",
+        "Русский тест",
+        "OCR распознавание"
+      ],
+      "test_ru_5texts.jpg": [
+        "Привет",
+        "Русский тест",
+        "OCR распознавание",
+        "Многоязычная поддержка",
+        "Извлечение текста из изображения"
+      ]
+    },
+    "images": [
+      "test_ru_3texts.jpg",
+      "test_ru_5texts.jpg"
+    ]
+  },
+  "sk": {
+    "description": "Slovak OCR Test",
+    "expected_texts": {
+      "test_sk_3texts.jpg": [
+        "Ahoj Svet",
+        "Slovenský test",
+        "OCR rozpoznávanie"
+      ],
+      "test_sk_5texts.jpg": [
+        "Ahoj Svet",
+        "Slovenský test",
+        "OCR rozpoznávanie",
+        "Viacjazyčná podpora",
+        "Extrakcia textu z obrázka"
+      ]
+    },
+    "images": [
+      "test_sk_3texts.jpg",
+      "test_sk_5texts.jpg"
+    ]
+  },
+  "sl": {
+    "description": "Slovenian OCR Test",
+    "expected_texts": {
+      "test_sl_3texts.jpg": [
+        "Pozdravljen Svet",
+        "Slovenski test",
+        "OCR prepoznavanje"
+      ],
+      "test_sl_5texts.jpg": [
+        "Pozdravljen Svet",
+        "Slovenski test",
+        "OCR prepoznavanje",
+        "Večjezična podpora",
+        "Izvleček besedila iz slike"
+      ]
+    },
+    "images": [
+      "test_sl_3texts.jpg",
+      "test_sl_5texts.jpg"
+    ]
+  },
+  "sq": {
+    "description": "Albanian OCR Test",
+    "expected_texts": {
+      "test_sq_3texts.jpg": [
+        "Përshëndetje Botë",
+        "Test shqip",
+        "Njohja OCR"
+      ],
+      "test_sq_5texts.jpg": [
+        "Përshëndetje Botë",
+        "Test shqip",
+        "Njohja OCR",
+        "Mbështetje shumëgjuhëshe",
+        "Nxjerrja e tekstit nga imazhi"
+      ]
+    },
+    "images": [
+      "test_sq_3texts.jpg",
+      "test_sq_5texts.jpg"
+    ]
+  },
+  "sr": {
+    "description": "Serbian OCR Test",
+    "expected_texts": {
+      "test_sr_3texts.jpg": [
+        "Serbian Text Recognition",
+        "OCR Accuracy Test",
+        "Serbian Character Recognition"
+      ],
+      "test_sr_5texts.jpg": [
+        "Serbian Text Recognition",
+        "OCR Accuracy Test",
+        "Serbian Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "images": [
+      "test_sr_3texts.jpg",
+      "test_sr_5texts.jpg"
+    ]
+  },
+  "sw": {
+    "description": "Swahili OCR Test",
+    "expected_texts": {
+      "test_sw_3texts.jpg": [
+        "Hujambo Dunia",
+        "Mtihani wa Kiswahili",
+        "Utambuzi wa OCR"
+      ],
+      "test_sw_5texts.jpg": [
+        "Hujambo Dunia",
+        "Mtihani wa Kiswahili",
+        "Utambuzi wa OCR",
+        "Msaada wa lugha nyingi",
+        "Utoaji wa maandishi kutoka picha"
+      ]
+    },
+    "images": [
+      "test_sw_3texts.jpg",
+      "test_sw_5texts.jpg"
+    ]
+  },
+  "th": {
+    "description": "Thai OCR Test",
+    "expected_texts": {
+      "test_th_3texts.jpg": [
+        "Thai Text Recognition",
+        "OCR Accuracy Test",
+        "Thai Character Recognition"
+      ],
+      "test_th_5texts.jpg": [
+        "Thai Text Recognition",
+        "OCR Accuracy Test",
+        "Thai Character Recognition",
+        "Multi-language Support Test",
+        "Image Text Extraction"
+      ]
+    },
+    "images": [
+      "test_th_3texts.jpg",
+      "test_th_5texts.jpg"
+    ]
+  },
+  "uk": {
+    "description": "Ukrainian OCR Test",
+    "expected_texts": {
+      "test_uk_3texts.jpg": [
+        "Привіт Світ",
+        "Український тест",
+        "OCR розпізнавання"
+      ],
+      "test_uk_5texts.jpg": [
+        "Привіт Світ",
+        "Український тест",
+        "OCR розпізнавання",
+        "Багатомовна підтримка",
+        "Витяг тексту з зображення"
+      ]
+    },
+    "images": [
+      "test_uk_3texts.jpg",
+      "test_uk_5texts.jpg"
+    ]
+  },
+  "uz": {
+    "description": "Uzbek OCR Test",
+    "expected_texts": {
+      "test_uz_3texts.jpg": [
+        "Salom Dunyo",
+        "O'zbek testi",
+        "OCR tan olish"
+      ],
+      "test_uz_5texts.jpg": [
+        "Salom Dunyo",
+        "O'zbek testi",
+        "OCR tan olish",
+        "Ko'p tilli qo'llab-quvvatlash",
+        "Rasmdan matn chiqarish"
+      ]
+    },
+    "images": [
+      "test_uz_3texts.jpg",
+      "test_uz_5texts.jpg"
+    ]
+  },
+  "zh": {
+    "description": "Chinese OCR Test",
+    "expected_texts": {
+      "test_zh_3texts.jpg": [
+        "中文文字识别",
+        "OCR准确率测试",
+        "多语言支持"
+      ],
+      "test_zh_5texts.jpg": [
+        "中文文字识别",
+        "OCR准确率测试",
+        "多语言支持",
+        "图像文字提取",
+        "文本识别技术"
+      ]
+    },
+    "images": [
+      "test_zh_3texts.jpg",
+      "test_zh_5texts.jpg"
+    ]
+  }
+}

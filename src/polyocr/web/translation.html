@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PolyOCR Translation</title>
+</head>
+<body>
+  <h1>翻译</h1>
+  <form id="translation-form">
+    <input id="api-key" type="password" autocomplete="off" placeholder="API Key" required>
+    <textarea id="texts" placeholder="每行一段文本" required></textarea>
+    <input id="target-language" value="en" required>
+    <button type="submit">翻译</button>
+  </form>
+  <pre id="result" aria-live="polite"></pre>
+  <script>
+    const form = document.querySelector("#translation-form");
+    const result = document.querySelector("#result");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      result.textContent = "处理中…";
+      const texts = document.querySelector("#texts").value.split("\n").filter(Boolean);
+      try {
+        const response = await fetch("/v2/translate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-Key": document.querySelector("#api-key").value
+          },
+          body: JSON.stringify({
+            texts,
+            target_language: document.querySelector("#target-language").value
+          })
+        });
+        result.textContent = JSON.stringify(await response.json(), null, 2);
+      } catch {
+        result.textContent = "请求失败。";
+      }
+    });
+  </script>
+</body>
+</html>
